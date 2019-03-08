@@ -1,6 +1,6 @@
 # Final project AE4
-# Jacinda Ng, Kelly Tran Ho, Yizhen(Sarah) Jin, Peerapong Saksommon
-# US Occupational Statistics
+## Member : Jacinda Ng, Kelly Tran Ho, Yizhen(Sarah) Jin, Peerapong Saksommon
+## Title : US Occupational Statistics
 
 This repo contains R code for making an interactive web application for course final project.
 The application shows visualizations for wages distribution among states of the US.
