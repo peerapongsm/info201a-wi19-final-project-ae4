@@ -30,5 +30,5 @@ race_data <- original_race_data[-c(1:6, 8), ] %>%
 View(race_data)
 
 gender_race_data <- inner_join(gender_data, race_data, by = "Occupation")
-
+gender_race_data[2:12] <- mapply(as.numeric, gender_race_data[2:12]) %>% round(2)
 View(gender_race_data)
