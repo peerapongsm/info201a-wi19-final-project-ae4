@@ -4,6 +4,7 @@ library("geojsonio")
 library("leaflet")
 library("readxl")
 library("dplyr")
+library(ggplot2)
 
 states <- geojson_read("data/us-states.json", what = "sp")
 gdp_2017  = read_xlsx("data/qgdpstate0219.xlsx")
@@ -20,14 +21,17 @@ gdp = gdp_2017[gdp_2017$a %in% state.name,] %>%
     "gdp_2017" = b
   )
 
+#Adds in District of Columbia and Puerto Rico rows 
 left_over  = data.frame(state = c("District of Columnbia","Puerto Rico"), gdp_2017 = c(0,0))
 gdp = rbind(gdp,left_over)
+#Creates levels to match with the states json
 levels = states$NAME
 rearranged_gdp <- as.data.frame(gdp %>% mutate(
   state = factor(state, levels = levels)) %>% 
     arrange(state)
 )
 
+#Adds another column
 states@data = states@data %>% mutate(gdp = rearranged_gdp$gdp_2017)
 
 
@@ -108,58 +112,64 @@ national_vs_states_df[4:11] <- lapply(national_vs_states_df[4:11], as.numeric)
 national_vs_states_df <- na.omit(national_vs_states_df)
 
 #This function has no arguments and summzaizes the national_vs_states dataframe and columns 4-11
+#Graph as box and whisker plot
 get_summary <- function() {
   summary(national_vs_states_df[4:11])
 }
 
-#This function has no argument and creates a new column 'diff' that calculates the differences of hourly wage for each occupation between Washington and the National data.
-#Then it looks for the highest difference between wages and selects the occupation title, the national average and Washington average along with the difference for that occupation.
-#Returns a list regarding information relating to the job that has the highest difference in wage between Washington and the National data.
+#Question: What occupations in Washington have the highest difference of wage comapared to the national data? 
 get_greatest_diff_wage_job_for_WA <- function() {
   job <- national_vs_states_df %>%
-    mutate(diff = california_hour_mean - hour_mean) %>%
-    filter(diff == max(diff, na.rm = TRUE)) %>%
-    select(OCC_TITLE, hour_mean, washington_hour_mean, diff)
-  as.list(job)
-}
+    mutate(diff = washington_hour_mean - hour_mean) %>%
+    arrange(desc(diff)) %>% 
+    select(
+      OCC_TITLE, washington_hour_mean, hour_mean, diff)
+  
+    as.data.frame(head(job))
+} 
 
-#This function has no argument and creates a new column 'diff' that calculates the differences of hourly wage for each occupation between Connecticut and National data.
-#Then it looks for the highest difference between wages and selects the occupation title.
-#Returns a list regarding information relating to the job that has the highest difference in wage between Connecticut and the National data.
+#Question: What occupations in Connecticut have the highest difference of wage comapared to the national data? 
 get_greatest_diff_wage_job_for_CT <- function() {
   job <- national_vs_states_df %>%
     mutate(diff = connecticut_hour_mean - hour_mean) %>%
-    filter(diff == max(diff, na.rm = TRUE)) %>%
-    select(OCC_TITLE)
-  as.list(job)
+    arrange(desc(diff)) %>% 
+    select(
+      OCC_TITLE, connecticut_hour_mean, hour_mean, diff)
+  
+  as.data.frame(head(job))
 }
 
-#This function has no argument and creates a new column 'diff' that calculates the differences of hourly wage for each occupation between Connecticut and Washington
-#Then it looks for the highest difference between wages and selects the occupation title.
-#Returns a list regarding information relating to the job that has the highest difference in wage between Connecticut and Washington data.
+
+
+#Question: What occupation between Washington and Connecticut have  the highest difference in wages?
 get_greatest_diff_wage_job_for_WA_vs_CT <- function() {
   job <- national_vs_states_df %>%
     mutate(diff = washington_hour_mean - connecticut_hour_mean) %>%
-    filter(diff == max(diff, na.rm = TRUE)) %>%
-    select(OCC_TITLE)
-  as.list(job)
+    arrange(desc(diff)) %>% 
+    select(
+      OCC_TITLE, connecticut_hour_mean, washington_hour_mean, diff)
+  
+  as.data.frame(head(job))
 }
 
-#This function has no argument and filters to look for row that contains to most employees in California and selects the occupation title.
-#Returns a data frame containing the occupation title.
+#Question: what job has the highest number of employees in Washington
 get_largest_employment_WA <- function() {
   job <- national_vs_states_df %>%
     filter(OCC_GROUP != "major" & OCC_GROUP != "total") %>%
-    filter(washington_tot_emp == max(washington_tot_emp, na.rm = TRUE)) %>%
-    select(OCC_TITLE)
+    arrange(desc(diff)) %>% 
+    select(
+      OCC_TITLE, washington_tot_emp, washington_hour_mean)
+  
+  as.data.frame(head(job))
 }
 
-#This function has no argument and filters to look for row that contains to most employees in Connecticut and selects the occupation title.
-#Returns a data frame containing the occupation title.
+#Question: What job has the hight number of employees in Connecticut
 get_largest_employment_CT <- function() {
   job <- national_vs_states_df %>%
     filter(OCC_GROUP != "major" & OCC_GROUP != "total") %>%
-    filter(connecticut_tot_emp == max(connecticut_tot_emp, na.rm = TRUE)) %>%
-    select(OCC_TITLE)
+    arrange(desc(diff)) %>% 
+    select(
+      OCC_TITLE, washington_tot_emp, washington_hour_mean)
+  as.data.frame(head(job))
 }
 
