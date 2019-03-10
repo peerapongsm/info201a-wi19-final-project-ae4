@@ -10,21 +10,25 @@ library("dplyr")
 library("tidyr")
 options(scipen = 999)
 
-gender_data<- readxl::read_xlsx("dataset/gender_wage_2017.xlsx") %>%
-  filter(Occupation != "Total, full-time wage and salary workers", Total_Median_Weekly_Earnings != "–", Male_Median_Weekly_Earnings != "–", Female_Median_Weekly_Earnings != "–")
+original_gender_data<- readxl::read_xlsx("dataset/gender_wage.xlsx") 
 
-gender_data[[1]] <- toupper(gender_data[[1]])
+colnames(original_gender_data) <- c("Occupation", "Total_Number_Of_Workers", "Total_Median_Weekly_Earnings", "Male_Number_Of_Workers", "Male_Median_Weekly_Earnings", "Female_Number_Of_Workers", "Female_Median_Weekly_Earnings")
 
-nation_data<- readxl::read_xlsx("dataset/nation_wage.xlsx") %>%
-  filter(OCC_GROUP == "broad", H_MEAN != "*") %>%
-  select(OCC_TITLE, H_MEAN, A_MEAN)
+gender_data <- original_gender_data[-c(1:6, 8), ] %>%
+  filter(Total_Median_Weekly_Earnings != "–", Male_Median_Weekly_Earnings != "–", Female_Median_Weekly_Earnings != "–")
 
-colnames(nation_data)[1] <- "Occupation"
-colnames(nation_data)[2] <- "Hourly_Mean"
-colnames(nation_data)[3] <- "Annual_Mean"
+View(gender_data)
 
-nation_data[[1]] <- toupper(nation_data[[1]])
+original_race_data <- readxl::read_xlsx("dataset/race_occupation.xlsx")
 
-gender_nation_data <- inner_join(gender_data, nation_data, by = "Occupation")
+colnames(original_race_data) <- c("Occupation", "Percent_Total_Employed", "Percent_Women_Employed", "Percent_White_Employed", "Percent_Black_or_African_American_Employed", "Percent_Asian_Employed", "Percent_Hispanic_or_Latino_Employed")
 
-View(gender_nation_data)
+race_data <- original_race_data[-c(1:6, 8), ] %>%
+  filter(Percent_White_Employed != "–", Percent_Black_or_African_American_Employed != "–", Percent_Asian_Employed != "–", Percent_Hispanic_or_Latino_Employed != "–") %>%
+  select("Occupation", "Percent_Total_Employed", "Percent_White_Employed", "Percent_Black_or_African_American_Employed", "Percent_Asian_Employed", "Percent_Hispanic_or_Latino_Employed")
+
+View(race_data)
+
+gender_race_data <- inner_join(gender_data, race_data, by = "Occupation")
+
+View(gender_race_data)
