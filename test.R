@@ -19,29 +19,34 @@ gdp = gdp_2017[gdp_2017$a %in% state.name,] %>%
     "state" = a,
     "gdp_2017" = b
   )
-#Rearranges the states in the gdp dataframe to match the 
-#states order in the states SpatialPolygonsDataFrame
+
+left_over  = data.frame(state = c("District of Columnbia","Puerto Rico"), gdp_2017 = c(0,0))
+gdp = rbind(gdp,left_over)
 levels = states$NAME
 rearranged_gdp <- as.data.frame(gdp %>% mutate(
   state = factor(state, levels = levels)) %>% 
-  arrange(state)
+    arrange(state)
 )
+
+states@data = states@data %>% mutate(gdp = rearranged_gdp$gdp_2017)
+
+
+
 #Bins for the map ranging from -2 to 5 incremented by 1
 bins <- seq(-2,5,1)
-pal <- colorBin(palette = "RdYlGn", domain = rearranged_gdp$gdp_2017, bins = bins)
+pal <- colorBin(palette = "RdYlGn", domain = states@data$gdp, bins = bins)
 
 labels <- sprintf(
   "<strong>%s</strong><br/>%g percent",
-  rearranged_gdp$state, rearranged_gdp$gdp_2017
+  states@data$NAME, states@data$gdp
 ) %>% lapply(htmltools::HTML)
-
 
 #GDP map of the US 
 leaflet(states) %>% 
   addTiles() %>% 
   setView(-97,39, zoom = 3) %>%
   addPolygons(
-    fillColor = ~pal(rearranged_gdp$gdp_2017),
+    fillColor = ~pal(gdp),
     weight = 1,
     dashArray = "3",
     color = "black",
@@ -60,7 +65,7 @@ leaflet(states) %>%
   ) %>%  addLegend(
                 pal = pal,
                 title = "Percent of GDP Growth (2017)",
-                values = ~rearranged_gdp$gdp_2017,
+                values = gdp,
                 labFormat = labelFormat(suffix = "%", between = " to "),
                 position = "bottomleft",
                 opacity = 2)
