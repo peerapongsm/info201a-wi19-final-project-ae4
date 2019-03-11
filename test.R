@@ -68,12 +68,12 @@ leaflet(states) %>%
       textsize = "15px",
       direction = "auto")
   ) %>%  addLegend(
-                pal = pal,
-                title = "Percent of GDP Growth (2017)",
-                values = gdp,
-                labFormat = labelFormat(suffix = "%", between = " to "),
-                position = "bottomleft",
-                opacity = 2)
+    pal = pal,
+    title = "Percent of GDP Growth (2017)",
+    values = gdp,
+    labFormat = labelFormat(suffix = "%", between = " to "),
+    position = "bottomleft",
+    opacity = 2)
 
 
 
@@ -117,15 +117,24 @@ national_vs_states_df <- na.omit(national_vs_states_df)
 get_summary <- function() {
   summary(national_vs_states_df[4:11])
 }
+###CHANGE THIS
+nat_vs_WA_CT_wage <- national_vs_states_df %>% 
+  select(national_hour_mean, washington_hour_mean, connecticut_hour_mean) %>% 
+  gather(key = state,
+         value = wage)
+ggplot(data = nat_vs_WA_CT_wage) +
+  geom_boxplot(mapping = aes(
+    x = state,
+    y = wage
+  ))
 
 #Question: What occupations in Washington have the highest difference of wage comapared to the national data? 
 get_greatest_diff_wage_job_for_WA <- function() {
   job <- head( national_vs_states_df %>%
-    mutate(diff = washington_hour_mean - national_hour_mean) %>%
-    arrange(desc(diff)) %>% 
-    select(
-      OCC_TITLE, washington_hour_mean, national_hour_mean), 5)
-  
+                 mutate(diff = washington_hour_mean - national_hour_mean) %>%
+                 arrange(desc(diff)) %>% 
+                 select(
+                   OCC_TITLE, washington_hour_mean, national_hour_mean), 5)
   job_gather <- job %>% 
     gather(key = state,
            value = wage,
@@ -153,7 +162,7 @@ ggplot(data = get_greatest_diff_wage_job_for_WA()) +
     axis.text.y = element_text(face="bold", 
                                size=14)
   )
-  
+
 #Question: What occupations in Connecticut have the highest difference of wage comapared to the national data? 
 get_greatest_diff_wage_job_for_CT <- function() {
   job <- national_vs_states_df %>%
@@ -206,21 +215,62 @@ get_greatest_diff_wage_job_for_WA_vs_CT <- function() {
 #Question: what job has the highest number of employees in Washington
 get_largest_employment_WA <- function() {
   job <- national_vs_states_df %>%
-    filter(OCC_GROUP != "major" & OCC_GROUP != "total") %>%
-    arrange(desc(diff)) %>% 
+    filter(OCC_GROUP == "detailed") %>%
+    arrange(desc(washington_tot_emp)) %>% 
     select(
       OCC_TITLE, washington_tot_emp, washington_hour_mean)
-  
-  job <- as.data.frame(head(job))
+
+
+  job <- job %>% head(5)
+  job
+
 }
+
+ggplot(data = get_largest_employment_WA())+
+  geom_col(mapping = aes(
+    x = OCC_TITLE,
+    y = washington_tot_emp
+  ), position = "dodge") +
+  labs(
+    title = "Employment number from occupations in Washington",
+    x = "Occupation",
+    y = "Employment number",
+    color = "State Data"
+  )+ theme(
+    axis.text.x = element_text(face="bold", 
+                               size=8, angle=90),
+    axis.text.y = element_text(face="bold", 
+                               size=8)
+  )
+
 
 #Question: What job has the hight number of employees in Connecticut
 get_largest_employment_CT <- function() {
   job <- national_vs_states_df %>%
-    filter(OCC_GROUP != "major" & OCC_GROUP != "total") %>%
-    arrange(desc(diff)) %>% 
+    filter(OCC_GROUP == "detailed") %>%
+    arrange(desc(connecticut_tot_emp)) %>% 
     select(
       OCC_TITLE, connecticut_tot_emp, connecticut_hour_mean)
-  as.data.frame(head(job))
+
+  job <- job %>% head(5)
+  job
+
 }
+
+ggplot(data = get_largest_employment_CT())+
+  geom_col(mapping = aes(
+    x = OCC_TITLE,
+    y = connecticut_tot_emp
+  ), position = "dodge") +
+  labs(
+    title = "Employment number from occupations in Connecticut",
+    x = "Occupation",
+    y = "Employment number",
+    color = "State Data"
+  )+ theme(
+    axis.text.x = element_text(face="bold", 
+                               size=8, angle=90),
+    axis.text.y = element_text(face="bold", 
+                               size=8)
+  )
 
