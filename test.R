@@ -211,7 +211,6 @@ get_largest_employment_WA <- function() {
     select(
       OCC_TITLE, washington_tot_emp, washington_hour_mean)
 
-  job <- job %>% head(5)
   job
 }
 
@@ -232,6 +231,22 @@ ggplot(data = get_largest_employment_WA())+
                                size=8)
   )
 
+ggplot(data = get_largest_employment_WA())+
+  geom_col(mapping = aes(
+    x = OCC_TITLE,
+    y = washington_tot_emp
+  ), position = "dodge") +
+  labs(
+    title = "Employment number from occupations in Washington",
+    x = "Occupation",
+    y = "Employment number",
+    color = "State Data"
+  )+ theme(
+    axis.text.x = element_text(face="bold", 
+                               size=8, angle=90),
+    axis.text.y = element_text(face="bold", 
+                               size=8)
+  )
 
 #Question: What job has the hight number of employees in Connecticut
 get_largest_employment_CT <- function() {
@@ -240,11 +255,11 @@ get_largest_employment_CT <- function() {
     arrange(desc(connecticut_tot_emp)) %>% 
     select(
       OCC_TITLE, connecticut_tot_emp, connecticut_hour_mean)
-  job <- job %>% head(5)
   job
 }
 
-ggplot(data = get_largest_employment_CT())+
+
+ggplot(data = head(get_largest_employment_CT(), 5))+
   geom_col(mapping = aes(
     x = OCC_TITLE,
     y = connecticut_tot_emp
@@ -261,3 +276,19 @@ ggplot(data = get_largest_employment_CT())+
                                size=8)
   )
 
+ggplot(data = tail(get_largest_employment_CT(), 5))+
+  geom_col(mapping = aes(
+    x = OCC_TITLE,
+    y = connecticut_tot_emp
+  ), position = "dodge") +
+  labs(
+    title = "Employment number from occupations in Connecticut",
+    x = "Occupation",
+    y = "Employment number",
+    color = "State Data"
+  )+ theme(
+    axis.text.x = element_text(face="bold", 
+                               size=8, angle=90),
+    axis.text.y = element_text(face="bold", 
+                               size=8)
+  )

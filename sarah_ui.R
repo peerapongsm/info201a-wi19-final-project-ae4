@@ -3,10 +3,8 @@ library(plotly)
 library(dplyr)
 library(graphics)
 
-shinyUI(navbarPage(
-  theme = "custom.css",
+sarah_ui <- navbarPage(
   "US Occupational Statistics",
-  id = "navbar",
   tabPanel(
     "Home",
     headerPanel(
@@ -18,6 +16,7 @@ shinyUI(navbarPage(
   br(),
   mainPanel(
     # text descripting the project
+    h1("US Occupational Statistics"),
     p("Our project studies the distribution of wages among occupations 50 states "),
     br(),
     h2("Page Description"),
@@ -25,18 +24,19 @@ shinyUI(navbarPage(
     P("Wage tab shows the difference between states and national occupational wage statistic using "),
     br(),
     p("Gender shows the difference between male and female’s salary within the same occupation field."),
-    width = 12
+
   )
   
 ),
+
 # Wage tab
 tabPanel(
   "Wage",
-  headerPanel(
-    h1("Wage", align = "center")
-  ),
+  tabsetPanel(type = 'pills',
+              tabPanel('Analysis',
   br()
 ),
+
 # Gender tab
 tabPanel(
   "Gender",
@@ -45,6 +45,7 @@ tabPanel(
   ),
   br()
 ),
+
 # About tab
 tabPanel(
   "About",
@@ -53,4 +54,7 @@ tabPanel(
   ),
   br()
 )
-))
+)
+
+sarah_server <- 
+shinyApp(ui = my_ui, server = sarah_server)
