@@ -1,4 +1,4 @@
-my_server = function(input, output) {
+peeras_jeng_server = function(input, output) {
   gender_race_data <- read.csv("dataset/gender_race_data.csv")
   
   arrange_data <- reactive({
@@ -45,3 +45,4 @@ my_server = function(input, output) {
     diff_gender_data = diff_gender_data() %>% select(Occupation, diff_gender)
   })
 }
+

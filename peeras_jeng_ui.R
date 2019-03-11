@@ -1,4 +1,4 @@
-my_ui = fluidPage(
+peeras_jeng_ui = fluidPage(
   titlePanel("Data of occupations by gender and ethnicity", windowTitle = "Gender and Race"),
   sidebarLayout(
     sidebarPanel(
@@ -24,3 +24,4 @@ my_ui = fluidPage(
     )
   )
 )
+
