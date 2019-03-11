@@ -112,11 +112,21 @@ national_vs_states_df <- left_join(national_df, washington_vs_connecticut_df, by
 national_vs_states_df[4:11] <- lapply(national_vs_states_df[4:11], as.numeric)
 national_vs_states_df <- na.omit(national_vs_states_df)
 
-#This function has no arguments and summzaizes the national_vs_states dataframe and columns 4-11
+#This function has no arguments and summarizes the national_vs_states dataframe and columns 4-11
 #Graph as box and whisker plot
 get_summary <- function() {
   summary(national_vs_states_df[4:11])
 }
+
+nat_vs_WA_CT_wage <- national_vs_states_df %>% 
+                      select(national_hour_mean, washington_hour_mean, connecticut_hour_mean) %>% 
+                      gather(key = state,
+                             value = wage)
+ggplot(data = nat_vs_WA_CT_wage) +
+  geom_boxplot(mapping = aes(
+    x = state,
+    y = wage
+  ))
 
 #Question: What occupations in Washington have the highest difference of wage comapared to the national data? 
 get_greatest_diff_wage_job_for_WA <- function() {
@@ -142,7 +152,8 @@ ggplot(data = get_greatest_diff_wage_job_for_WA()) +
     fill = state
   ), position = "dodge") +
   labs(
-    title = "Hourly Wages between National and Washington",
+    title = "Hourly Wages between the Nation and Washington",
+    subtitle = "Top 5 occupations where Washington has the higest difference of wage comapared to the nation",
     x = "Occupation",
     y = "Hourly Wage",
     color = "State Data"
@@ -223,4 +234,6 @@ get_largest_employment_CT <- function() {
       OCC_TITLE, connecticut_tot_emp, connecticut_hour_mean)
   as.data.frame(head(job))
 }
+
+
 
