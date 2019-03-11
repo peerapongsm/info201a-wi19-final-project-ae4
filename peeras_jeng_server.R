@@ -33,7 +33,7 @@ peeras_jeng_server = function(input, output) {
       geom_col(alpha = 0.6, position = "dodge") +
       theme(axis.text.x = element_text(angle = 90, hjust = 1)) + ylab("Employees")
   })
-  output$table_employee = renderDataTable({
+  output$table_employee = renderTable({
     arrange_data = arrange_data() %>% select(Occupation, Total_Number_Of_Workers, 
                                              Male_Number_Of_Workers, Female_Number_Of_Workers)
   })
@@ -41,7 +41,13 @@ peeras_jeng_server = function(input, output) {
     ggplot(diff_gender_data(), aes(x = Occupation, y = diff_gender)) + geom_col(fill = "purple", alpha = 0.6) +
       theme(axis.text.x = element_text(angle = 90, hjust = 1)) + ylab("Employment differences")
   })
-  output$table_gender_diff = renderDataTable({
+  
+  output$caption = renderText({
+    caption <- paste("*Note: When the differences are negative, it means that there are more females employed in that specific occupation. When the differences are positive, it means that there are more males employed in the specific occupation. 
+                 This is because most occupations have a greater number of male employees than female employees.")
+    caption
+  })
+  output$table_gender_diff = renderTable({
     diff_gender_data = diff_gender_data() %>% select(Occupation, diff_gender)
   })
 }
