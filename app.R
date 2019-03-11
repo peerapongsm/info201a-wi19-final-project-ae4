@@ -6,7 +6,6 @@ library("leaflet")
 library("geojsonio")
 library("stringr")
 library("DT")
-source("data.R")
 source("my_ui.R")
 source("my_server.R")
 
