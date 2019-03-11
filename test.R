@@ -4,10 +4,11 @@ library("geojsonio")
 library("leaflet")
 library("readxl")
 library("dplyr")
+library(tidyr)
 library(ggplot2)
 
-states <- geojson_read("data/us-states.json", what = "sp")
-gdp_2017  = read_xlsx("data/qgdpstate0219.xlsx")
+states <- geojson_read("dataset/us-states.json", what = "sp")
+gdp_2017  = read_xlsx("dataset/qgdpstate0219.xlsx")
 
 #Temporaily rename columns
 colnames(gdp_2017) = letters[1:10]
@@ -80,9 +81,9 @@ leaflet(states) %>%
 national_df <- read_xlsx("dataset/national_M2017_dl.xlsx") %>%
   select(OCC_CODE, OCC_TITLE, OCC_GROUP, TOT_EMP, H_MEAN, A_MEAN) %>%
   rename(
-    "tot_emp" = TOT_EMP,
-    "hour_mean" = H_MEAN,
-    "annual_mean" = A_MEAN
+    "national_tot_emp" = TOT_EMP,
+    "national_hour_mean" = H_MEAN,
+    "national_annual_mean" = A_MEAN
   )
 
 state_df <- read_xlsx("dataset/state_M2017_dl.xlsx")
@@ -119,25 +120,75 @@ get_summary <- function() {
 
 #Question: What occupations in Washington have the highest difference of wage comapared to the national data? 
 get_greatest_diff_wage_job_for_WA <- function() {
-  job <- national_vs_states_df %>%
-    mutate(diff = washington_hour_mean - hour_mean) %>%
+  job <- head( national_vs_states_df %>%
+    mutate(diff = washington_hour_mean - national_hour_mean) %>%
     arrange(desc(diff)) %>% 
     select(
-      OCC_TITLE, washington_hour_mean, hour_mean, diff)
+      OCC_TITLE, washington_hour_mean, national_hour_mean), 5)
   
-    as.data.frame(head(job))
+  job_gather <- job %>% 
+    gather(key = state,
+           value = wage,
+           -OCC_TITLE)
+  
+  job_gather
+  
 } 
 
+ggplot(data = get_greatest_diff_wage_job_for_WA()) +
+  geom_col(mapping = aes(
+    x = OCC_TITLE,
+    y = wage,
+    fill = state
+  ), position = "dodge") +
+  labs(
+    title = "Hourly Wages between National and Washington",
+    x = "Occupation",
+    y = "Hourly Wage",
+    color = "State Data"
+  ) + theme(
+    legend.justification = c("left", "top"),
+    axis.text.x = element_text(face="bold", 
+                               size=14, angle=90),
+    axis.text.y = element_text(face="bold", 
+                               size=14)
+  )
+  
 #Question: What occupations in Connecticut have the highest difference of wage comapared to the national data? 
 get_greatest_diff_wage_job_for_CT <- function() {
   job <- national_vs_states_df %>%
-    mutate(diff = connecticut_hour_mean - hour_mean) %>%
+    mutate(diff = connecticut_hour_mean - national_hour_mean) %>%
     arrange(desc(diff)) %>% 
     select(
-      OCC_TITLE, connecticut_hour_mean, hour_mean, diff)
+      OCC_TITLE, connecticut_hour_mean, national_hour_mean)
   
-  as.data.frame(head(job))
+  job <- as.data.frame(head(job, 5))
+  
+  job_gather <- job %>% 
+    gather(key = state,
+           value = wage,
+           -OCC_TITLE)
+  
 }
+
+ggplot(data = get_greatest_diff_wage_job_for_CT()) +
+  geom_col(mapping = aes(
+    x = OCC_TITLE,
+    y = wage,
+    fill = state
+  ), position = "dodge") +
+  labs(
+    title = "Hourly Wages between National and Connecticut",
+    x = "Occupation",
+    y = "Hourly Wage",
+    color = "State Data"
+  ) + theme(
+    legend.justification = c("left", "top"),
+    axis.text.x = element_text(face="bold", 
+                               size=14, angle=90),
+    axis.text.y = element_text(face="bold", 
+                               size=14)
+  )
 
 
 
@@ -160,7 +211,7 @@ get_largest_employment_WA <- function() {
     select(
       OCC_TITLE, washington_tot_emp, washington_hour_mean)
   
-  as.data.frame(head(job))
+  job <- as.data.frame(head(job))
 }
 
 #Question: What job has the hight number of employees in Connecticut
@@ -169,7 +220,7 @@ get_largest_employment_CT <- function() {
     filter(OCC_GROUP != "major" & OCC_GROUP != "total") %>%
     arrange(desc(diff)) %>% 
     select(
-      OCC_TITLE, washington_tot_emp, washington_hour_mean)
+      OCC_TITLE, connecticut_tot_emp, connecticut_hour_mean)
   as.data.frame(head(job))
 }
 
