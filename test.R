@@ -7,8 +7,8 @@ library("dplyr")
 library(tidyr)
 library(ggplot2)
 
-states <- geojson_read("data/us-states.json", what = "sp")
-gdp_2017  = read_xlsx("data/qgdpstate0219.xlsx")
+states <- geojson_read("dataset/us-states.json", what = "sp")
+gdp_2017  = read_xlsx("dataset/qgdpstate0219.xlsx")
 
 #Temporaily rename columns
 colnames(gdp_2017) = letters[1:10]
@@ -78,7 +78,7 @@ leaflet(states) %>%
 
 
 #Taken from A6
-national_df <- read_xlsx("data/national_M2017_dl.xlsx") %>%
+national_df <- read_xlsx("dataset/national_M2017_dl.xlsx") %>%
   select(OCC_CODE, OCC_TITLE, OCC_GROUP, TOT_EMP, H_MEAN, A_MEAN) %>%
   rename(
     "national_tot_emp" = TOT_EMP,
@@ -86,7 +86,7 @@ national_df <- read_xlsx("data/national_M2017_dl.xlsx") %>%
     "national_annual_mean" = A_MEAN
   )
 
-state_df <- read_xlsx("data/state_M2017_dl.xlsx")
+state_df <- read_xlsx("dataset/state_M2017_dl.xlsx")
 
 washington_df <- state_df %>%
   filter(STATE == "Washington") %>%
@@ -117,6 +117,16 @@ national_vs_states_df <- na.omit(national_vs_states_df)
 get_summary <- function() {
   summary(national_vs_states_df[4:11])
 }
+###CHANGE THIS
+nat_vs_WA_CT_wage <- national_vs_states_df %>% 
+  select(national_hour_mean, washington_hour_mean, connecticut_hour_mean) %>% 
+  gather(key = state,
+         value = wage)
+ggplot(data = nat_vs_WA_CT_wage) +
+  geom_boxplot(mapping = aes(
+    x = state,
+    y = wage
+  ))
 
 #Question: What occupations in Washington have the highest difference of wage comapared to the national data? 
 get_greatest_diff_wage_job_for_WA <- function() {
@@ -125,7 +135,6 @@ get_greatest_diff_wage_job_for_WA <- function() {
                  arrange(desc(diff)) %>% 
                  select(
                    OCC_TITLE, washington_hour_mean, national_hour_mean), 5)
-  
   job_gather <- job %>% 
     gather(key = state,
            value = wage,
@@ -211,7 +220,9 @@ get_largest_employment_WA <- function() {
     select(
       OCC_TITLE, washington_tot_emp, washington_hour_mean)
 
+  job <- job %>% head(5)
   job
+
 }
 
 ggplot(data = get_largest_employment_WA())+
@@ -255,7 +266,13 @@ get_largest_employment_CT <- function() {
     arrange(desc(connecticut_tot_emp)) %>% 
     select(
       OCC_TITLE, connecticut_tot_emp, connecticut_hour_mean)
+<<<<<<< HEAD
+=======
+
+  job <- job %>% head(5)
+>>>>>>> 1f8932b7dc95f9c7ee2dab2c934ea8c4753a9e9c
   job
+
 }
 
 
