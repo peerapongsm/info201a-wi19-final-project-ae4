@@ -1,54 +1,83 @@
 peeras_jeng_server = function(input, output) {
-  gender_race_data <- read.csv("dataset/gender_race_data.csv")
   
   arrange_data <- reactive({
-    arrange_data = gender_race_data %>% arrange(-Total_Number_Of_Workers)
-    if (grepl(input$employee, "most")) {
-      arrange_data = arrange_data %>% head(10)
+    arrange_data = gender_race_data <- read.csv("dataset/gender_race_data.csv") %>% 
+                    mutate(diff_gender = Male_Number_Of_Workers - Female_Number_Of_Workers)
+    if(grepl(input$select, "emp") | grepl(input$select, "gdr")) {
+      if (grepl(input$radio, "most")) {
+        arrange_data %>% na.omit() %>% arrange(-Total_Number_Of_Workers)
+      } else {
+        arrange_data %>% na.omit() %>% arrange(Total_Number_Of_Workers)
+      }
     } else {
-      arrange_data = arrange_data %>% tail(10)
+      if (grepl(input$radio, "most")) {
+        arrange_data %>% na.omit() %>% arrange(-diff_gender)
+      } else {
+        arrange_data %>% na.omit() %>% arrange(diff_gender)
+      }
     }
   })
   
-  diff_gender_data = reactive({
-    diff_gender_data = gender_race_data %>% 
-      mutate(diff_gender = Male_Number_Of_Workers - Female_Number_Of_Workers) %>% 
-      arrange(-diff_gender)
-    if (grepl(input$diff_gender, "most")) {
-      diff_gender_data = diff_gender_data %>% head(10)
-    } else {
-      diff_gender_data = diff_gender_data %>% tail(10)
+  output$bar_header = renderText({
+    tmp = paste("Top 10 occupations with", input$radio)
+    if (grepl(input$select, "emp")) {
+      paste(tmp, "total workers")
+    } else if (grepl(input$select, "gdr")) {
+      paste(tmp, "total workers with gender details")
+    }  else {
+      paste(tmp, "gender different in number of workers")
     }
   })
   
-  output$total_employee = renderPlot({
-    ggplot(arrange_data(), aes(x = Occupation, y = Total_Number_Of_Workers, fill = Occupation)) + 
-      geom_col(alpha = 0.6) +
-      theme(axis.text.x = element_blank()) + ylab("Employees")
-  })
-  output$gender_employee = renderPlot({
-    arrange_data = arrange_data() %>% gather(key = "gender", value = "employees", 
-                                             Male_Number_Of_Workers, Female_Number_Of_Workers)
-    ggplot(arrange_data, aes(x = Occupation, y = employees, fill = gender)) + 
-      geom_col(alpha = 0.6, position = "dodge") +
-      theme(axis.text.x = element_text(angle = 90, hjust = 1)) + ylab("Employees")
-  })
-  output$table_employee = renderTable({
-    arrange_data = arrange_data() %>% select(Occupation, Total_Number_Of_Workers, 
-                                             Male_Number_Of_Workers, Female_Number_Of_Workers)
-  })
-  output$gender_diff = renderPlot({
-    ggplot(diff_gender_data(), aes(x = Occupation, y = diff_gender)) + geom_col(fill = "purple", alpha = 0.6) +
-      theme(axis.text.x = element_text(angle = 90, hjust = 1)) + ylab("Employment differences")
+  output$bar = renderPlot({
+    arrange_data = arrange_data() %>% head(10)
+    if(grepl(input$select, "emp")) {
+      ggplot(arrange_data, aes(x = Occupation, y = Total_Number_Of_Workers, fill = Occupation)) + 
+        geom_col(alpha = 0.6) +
+        theme(axis.text.x = element_blank()) + ylab("Employees")
+    } else if (grepl(input$select, "gdr")) {
+      arrange_data = arrange_data %>% gather(key = "gender", value = "employees", 
+                                               Male_Number_Of_Workers, Female_Number_Of_Workers)
+      ggplot(arrange_data, aes(x = Occupation, y = employees, fill = gender)) + 
+        geom_col(alpha = 0.6, position = "dodge") +
+        theme(axis.text.x = element_text(angle = 90, hjust = 1)) + ylab("Employees")
+    } else {
+      ggplot(arrange_data, aes(x = Occupation, y = diff_gender)) + geom_col(fill = "purple", alpha = 0.6) +
+        theme(axis.text.x = element_text(angle = 90, hjust = 1)) + ylab("Employment differences")
+    }
   })
   
-  output$caption = renderText({
-    caption <- paste("*Note: When the differences are negative, it means that there are more females employed in that specific occupation. When the differences are positive, it means that there are more males employed in the specific occupation. 
-                 This is because most occupations have a greater number of male employees than female employees.")
-    caption
+  output$table_header = renderText({
+    if (grepl(input$select, "emp")) {
+      "Table of total workers by occupation"
+    } else if (grepl(input$select, "gdr")) {
+      "Table of workers per gender by occupation"
+    }  else {
+      "Table of gender different in workers by occupation"
+    }
   })
-  output$table_gender_diff = renderTable({
-    diff_gender_data = diff_gender_data() %>% select(Occupation, diff_gender)
+  
+  output$table = renderDataTable({
+    arrange_data = arrange_data()
+    if(grepl(input$select, "emp")) {
+      arrange_data = arrange_data %>% select(Occupation, Total_Number_Of_Workers)
+    } else if (grepl(input$select, "gdr")) {
+      arrange_data = arrange_data %>% select(Occupation, Male_Number_Of_Workers, Female_Number_Of_Workers)
+    } else {
+      arrange_data = arrange_data %>% select(Occupation, diff_gender)
+    }
+    datatable(arrange_data, filter = "none", select = "single")
+  })
+  
+  output$note = renderText({
+    if(grepl(input$select, "gdiff")) {
+      "*Note: When the differences are negative, it means that there are more females employed in that specific occupation. 
+      When the differences are positive, it means that there are more males employed in the specific occupation."
+    }
+  })
+  
+  output$pie = renderPlot({
+    print('test')
   })
 }
 
