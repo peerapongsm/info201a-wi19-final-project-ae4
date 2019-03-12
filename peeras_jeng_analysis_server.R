@@ -66,7 +66,11 @@ peeras_jeng_analysis_server = function(input, output) {
   })
   
   output$question_3 = renderText({
-    "What do the mean ethnicity distributions represent?"
+    "What do the average ethnicity distributions represent?"
+  })
+  
+  output$pie_title = renderText({
+    "Mean Ethnicity Distribution of All Occupations in 2018"
   })
   
   output$management_pie = renderPlot({
