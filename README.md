@@ -1,5 +1,5 @@
 # Final project AE4
-## Member : Jacinda Ng, Kelly Tran Ho, Yizhen(Sarah) Jin, Peerapong Saksommon
+## Member : Jacinda Eng, Kelly Tran Ho, Yizhen(Sarah) Jin, Peerapong Saksommon
 ## Title : US Occupational Statistics
 
 This repo contains R code for making an interactive web application for course final project.
