@@ -18,7 +18,7 @@ peeras_jeng_ui <- fluidPage(
     mainPanel(
       tabsetPanel(
         type = "tabs",
-        tabPanel("Bar plot", h3(textOutput("bar_header")), plotOutput("bar")),
+        tabPanel("Bar plot", h3(textOutput("bar_header")), plotOutput("bar", width = "100%", height = "550px")),
         tabPanel("Table", h3(textOutput("table_header")), dataTableOutput("table"), textOutput("note")),
         tabPanel("Pie chart", h3(textOutput("pie_header")), plotOutput("pie"))
       )
