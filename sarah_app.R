@@ -1,0 +1,11 @@
+library("shiny")
+library("dplyr")
+library("ggplot2")
+library("geojsonio")
+library("jsonlite")
+library("DT")
+library("tidyr")
+
+source("sarah_server.R")
+source("sarah_ui.R")
+shinyApp(ui = sarah_ui, server = sarah_server)
