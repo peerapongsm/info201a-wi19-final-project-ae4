@@ -1,8 +1,41 @@
 peeras_jeng_analysis_ui = fluidPage(
   titlePanel(h1("Analyzing Tables and Graphs")),
   tags$section(id =  "first_section", 
-               h2(textOutput("header"),
-               textOutput("content")
-               )),
+               h2(textOutput("header")),
+               textOutput("first_section_content")
+               ),
+  tags$section(id = "question_1_second_section",
+              h2(textOutput("questions")),
+              strong((textOutput("question_1"))),
+              br(),
+              plotOutput("gender_employee"),
+              textOutput("question_1_content")
+              ),
+  br(),
+  tags$section(id = "question_2_second_section",
+               strong((textOutput("question_2"))),
+               br(),
+               (textOutput("male_difference_table_title")),
+               dataTableOutput("male_difference_table"),
+               br(),
+               (textOutput("female_difference_table_title")),
+               dataTableOutput("female_difference_table"),
+               textOutput("question_2_content")
+               ),
+  br(),
+  tags$section(id = "question_3_second_section",
+               strong((textOutput("question_3"))),
+               br(),
+               textOutput("pie_title"),
+               plotOutput("management_pie"),
+               textOutput("question_3_content")
+               ),
+  tags$section(id = "third_section",
+               h2(textOutput("conclusion")),
+               textOutput("conclusion_content")
+  ),
+ tags$section(id = "reference",
+              h2(textOutput("reference")),
+              textOutput("links"))
 )
 
