@@ -4,11 +4,19 @@ library("geojsonio")
 library("leaflet")
 library("readxl")
 library("dplyr")
-library(tidyr)
-library(ggplot2)
+library("tidyr")
+library("ggplot2")
 
 states <- geojson_read("dataset/us-states.json", what = "sp")
 gdp_2017  = read_xlsx("dataset/qgdpstate0219.xlsx")
+
+state_df <- read_xlsx("dataset/state_M2017_dl.xlsx")
+
+user_state <- state_df %>% 
+  filter("major" == OCC_GROUP) %>% 
+  select(STATE, OCC_TITLE , TOT_EMP) %>% arrange(desc(TOT_EMP))
+
+
 
 #Temporaily rename columns
 colnames(gdp_2017) = letters[1:10]
@@ -25,6 +33,20 @@ gdp = gdp_2017[gdp_2017$a %in% state.name,] %>%
 #Adds in District of Columbia and Puerto Rico rows 
 left_over  = data.frame(state = c("District of Columnbia","Puerto Rico"), gdp_2017 = c(0,0))
 gdp = rbind(gdp,left_over)
+
+state_df[7:23] <- lapply(state_df[7:23], as.numeric)
+ states_summarized <- state_df %>%
+                       group_by(STATE) %>%
+                       summarize(
+                         avg_hour_wage = round(mean(H_MEAN, na.rm = TRUE),2),
+                         avg_total_employee = round(mean(TOT_EMP, na.rm = TRUE),2)
+                       ) %>%
+                       filter(STATE !=  "Guam" & STATE != "Virgin Islands")
+ rearranged_states_summarized <- as.data.frame(states_summarized %>% mutate(
+   state = factor(STATE, levels = levels)) %>%
+     arrange(state))
+
+ 
 #Creates levels to match with the states json
 levels = states$NAME
 rearranged_gdp <- as.data.frame(gdp %>% mutate(
@@ -33,7 +55,9 @@ rearranged_gdp <- as.data.frame(gdp %>% mutate(
 )
 
 #Adds another column
-states@data = states@data %>% mutate(gdp = rearranged_gdp$gdp_2017)
+states@data = states@data %>% mutate(gdp = rearranged_gdp$gdp_2017,
+                                     hourly_wage = rearranged_states_summarized$avg_hour_wage,
+                                     total_employee = rearranged_states_summarized$avg_total_employee)
 
 
 
@@ -75,6 +99,30 @@ leaflet(states) %>%
     position = "bottomleft",
     opacity = 2)
 
+# 
+# ##Sandbox
+# ###
+# state_df[4:11] <- lapply(state_df[4:11], as.numeric)
+# states_summarized <- state_df %>%
+#                       group_by(STATE) %>%
+#                       summarize(
+#                         avg_hour_wage = round(mean(H_MEAN, na.rm = TRUE),2)
+#                         avg_total_employee = round(mean(TOT_EMP, na.rm = TRUE),2)
+#                       ) %>%
+#                       filter(STATE !=  "Guam" & STATE != "Virgin Islands")
+# rearranged_states_summarized <- as.data.frame(states_summarized %>% mutate(
+#   state = factor(STATE, levels = levels)) %>%
+#     arrange(state))
+# states@data = states@data %>% mutate(
+#   hourly_wage = rearranged_states_summarized$avg_hour_wage,
+#   total_employee = rearranged_states_summarized$avg_total_employee)
+# 
+# 
+# 
+# 
+
+
+
 
 
 #Taken from A6
@@ -86,7 +134,6 @@ national_df <- read_xlsx("dataset/national_M2017_dl.xlsx") %>%
     "national_annual_mean" = A_MEAN
   )
 
-state_df <- read_xlsx("dataset/state_M2017_dl.xlsx")
 
 washington_df <- state_df %>%
   filter(STATE == "Washington") %>%
@@ -112,7 +159,7 @@ national_vs_states_df <- left_join(national_df, washington_vs_connecticut_df, by
 national_vs_states_df[4:11] <- lapply(national_vs_states_df[4:11], as.numeric)
 national_vs_states_df <- na.omit(national_vs_states_df)
 
-#This function has no arguments and summzaizes the national_vs_states dataframe and columns 4-11
+#This function has no arguments and summarizes the national_vs_states dataframe and columns 4-11
 #Graph as box and whisker plot
 get_summary <- function() {
   summary(national_vs_states_df[4:11])
@@ -122,6 +169,16 @@ nat_vs_WA_CT_wage <- national_vs_states_df %>%
   select(national_hour_mean, washington_hour_mean, connecticut_hour_mean) %>% 
   gather(key = state,
          value = wage)
+ggplot(data = nat_vs_WA_CT_wage) +
+  geom_boxplot(mapping = aes(
+    x = state,
+    y = wage
+  ))
+
+nat_vs_WA_CT_wage <- national_vs_states_df %>% 
+                      select(national_hour_mean, washington_hour_mean, connecticut_hour_mean) %>% 
+                      gather(key = state,
+                             value = wage)
 ggplot(data = nat_vs_WA_CT_wage) +
   geom_boxplot(mapping = aes(
     x = state,
@@ -151,7 +208,8 @@ ggplot(data = get_greatest_diff_wage_job_for_WA()) +
     fill = state
   ), position = "dodge") +
   labs(
-    title = "Hourly Wages between National and Washington",
+    title = "Hourly Wages between the Nation and Washington",
+    subtitle = "Top 5 occupations where Washington has the higest difference of wage comapared to the nation",
     x = "Occupation",
     y = "Hourly Wage",
     color = "State Data"
@@ -274,6 +332,7 @@ get_largest_employment_CT <- function() {
 }
 
 
+<<<<<<< HEAD
 ggplot(data = head(get_largest_employment_CT(), 5))+
   geom_col(mapping = aes(
     x = OCC_TITLE,
@@ -307,3 +366,6 @@ ggplot(data = tail(get_largest_employment_CT(), 5))+
     axis.text.y = element_text(face="bold", 
                                size=8)
   )
+=======
+WA = state_df %>% filter(ST == "WA")
+>>>>>>> 90290baebbf0ea96f944e7ccfc87414f90f57eff
