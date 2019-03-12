@@ -8,7 +8,13 @@ library(ggplot2)
 
 
 states <- geojson_read("dataset/us-states.json", what = "sp")
-gdp_2017  = read_xlsx("dataset/qgdpstate0219.xlsx")
+gdp_2017  = read_xlsx("dataset/qgd_state.xlsx")
+state_df <- read_xlsx("dataset/state_M2017_dl.xlsx")
+washington_vs_connecticut_df <- left_join(washington_df, connecticut_df, by = c("OCC_CODE", "OCC_TITLE"))
+national_vs_states_df <- left_join(national_df, washington_vs_connecticut_df, by = c("OCC_CODE", "OCC_TITLE"))
+
+national_vs_states_df[4:11] <- lapply(national_vs_states_df[4:11], as.numeric)
+national_vs_states_df <- na.omit(national_vs_states_df)
 
 sarah_server <- function(input, output) {
   # map
