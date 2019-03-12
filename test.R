@@ -131,16 +131,16 @@ ggplot(data = nat_vs_WA_CT_wage) +
 #Question: What occupations in Washington have the highest difference of wage comapared to the national data? 
 get_greatest_diff_wage_job_for_WA <- function() {
   job <- head( national_vs_states_df %>%
-                 mutate(diff = washington_hour_mean - national_hour_mean) %>%
-                 arrange(desc(diff)) %>% 
-                 select(
-                   OCC_TITLE, washington_hour_mean, national_hour_mean), 5)
+                 mutate(diff = washington_hour_mean - national_hour_mean)  %>%
+                 arrange(desc(diff)), 5)
+               #   select(
+               #     OCC_TITLE, washington_hour_mean, national_hour_mean), 5)
   job_gather <- job %>% 
     gather(key = state,
            value = wage,
            -OCC_TITLE)
   
-  job_gather
+  View(job)
   
 } 
 
@@ -216,22 +216,24 @@ get_greatest_diff_wage_job_for_WA_vs_CT <- function() {
 get_largest_employment_WA <- function() {
   job <- national_vs_states_df %>%
     filter(OCC_GROUP == "detailed") %>%
-    arrange(desc(washington_tot_emp)) %>% 
+    arrange(desc(washington_tot_emp)) 
+  View(head(job,5))
+  
+  %>% 
     select(
       OCC_TITLE, washington_tot_emp, washington_hour_mean)
 
-  job <- job %>% head(5)
-  job
+  viejob
 
 }
 
-ggplot(data = get_largest_employment_WA())+
+ggplot(data = head(get_largest_employment_WA(), 5))+
   geom_col(mapping = aes(
     x = OCC_TITLE,
     y = washington_tot_emp
   ), position = "dodge") +
   labs(
-    title = "Employment number from occupations in Washington",
+    title = "Top 5 Employment Occupations in Washington",
     x = "Occupation",
     y = "Employment number",
     color = "State Data"
@@ -242,7 +244,7 @@ ggplot(data = get_largest_employment_WA())+
                                size=8)
   )
 
-ggplot(data = get_largest_employment_WA())+
+ggplot(data = tail(get_largest_employment_WA(), 5))+
   geom_col(mapping = aes(
     x = OCC_TITLE,
     y = washington_tot_emp
@@ -264,13 +266,9 @@ get_largest_employment_CT <- function() {
   job <- national_vs_states_df %>%
     filter(OCC_GROUP == "detailed") %>%
     arrange(desc(connecticut_tot_emp)) %>% 
-    select(
-      OCC_TITLE, connecticut_tot_emp, connecticut_hour_mean)
-<<<<<<< HEAD
-=======
+    select(OCC_TITLE, connecticut_tot_emp, connecticut_hour_mean)
 
   job <- job %>% head(5)
->>>>>>> 1f8932b7dc95f9c7ee2dab2c934ea8c4753a9e9c
   job
 
 }
@@ -282,7 +280,7 @@ ggplot(data = head(get_largest_employment_CT(), 5))+
     y = connecticut_tot_emp
   ), position = "dodge") +
   labs(
-    title = "Employment number from occupations in Connecticut",
+    title = "Top 5 Employment Occupations in Connecticut",
     x = "Occupation",
     y = "Employment number",
     color = "State Data"
@@ -299,7 +297,7 @@ ggplot(data = tail(get_largest_employment_CT(), 5))+
     y = connecticut_tot_emp
   ), position = "dodge") +
   labs(
-    title = "Employment number from occupations in Connecticut",
+    title = " 5 Occupations with least employment in Connecticut",
     x = "Occupation",
     y = "Employment number",
     color = "State Data"
