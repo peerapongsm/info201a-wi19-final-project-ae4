@@ -343,7 +343,7 @@ gather_server = function(input, output) {
   output$data4 <- renderUI({
     tagList("- ", a("Where are all women?", href = "https://www.theguardian.com/careers/careers-blog/2015/may/19/where-are-all-the-women-why-99-of-construction-site-workers-are-male"))
   })
-  
+
   # Connecticut difference 5 jobs
   output$ctDiff <- renderPlot({
     job <- national_vs_states_df() %>%
