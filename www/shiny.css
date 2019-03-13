@@ -1,5 +1,5 @@
 body{
-  background-image: url("home.png");
+  background-image: radial-gradient(#d0e8e1, #afcec5);
   background-repeat: repeat-x;
   background-size: 3000px;
 }
@@ -9,6 +9,3 @@ p {
     font-size: 20px;
 }
 
-section {
-  background-color: gray;
-}
