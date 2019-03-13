@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+about <-
+=======
 about <- tabPanel(
   "About",
   headerPanel(
@@ -14,3 +17,4 @@ about <- tabPanel(
     uiOutput("data3")
   )
 )
+>>>>>>> a4edc127c5e11f3aaea4bca69dfcb3bb144dd7bf
