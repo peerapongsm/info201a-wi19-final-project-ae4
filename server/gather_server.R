@@ -252,34 +252,7 @@ gather_server <- function(input, output) {
   })
 
   ## Sarah's Server##
-  # text for intro of GDP
-  output$wage_GDP <- renderText({
-    "Gross domestic product (GDP) is the monetary value of all the finished goods and services produced within a country's borders in a specific time period."
-  })
-  # text for explaining map
-  output$wage_map_analysis <- renderText({
-    "The map below shows the GDP differences between states. The state with the highest GDP is Washington, and the state with the lowest GDP is Connecticut. 
-    Therefore, our project chose these two states and compare it with national employment data."
-  })
-  # text for first wage graph
-  output$wage_analysis_1 <- renderText({
-    "The graph shows five occupations that have the greatest hourly wages difference between Washington and national wage in the year of 2017. 
-    Individuals that work as electrical drafters, emergency medical technicians and paramedics, internists,
-    or psychiatrists in state of Washington would receive pays above national level.
-    The mean difference from those five occupations are $16.374 per hour."
-  })
-  # text for second wage graph
-  output$wage_analysis_2 <- renderText({
-    "Similar to the graph above, it shows the top five occupations in the state of Connecticut. Individuals that work as dentists, internists, judges, funeral Director, 
-    and real estate broker have hourly wages that exceed national averages with the highest differences. 
-    It have the mean of $16.37 above national wages from those top five occupations. Internists have the highest difference with 25.41 above national hourly wage."
-  })
-  # text for third wage graph
-  output$wage_analysis_3 <- renderText({
-    "States often times have their focused industries. 
-    When individuals start looking for jobs, it is good for them to keep in mind what the state is focusing on. 
-    There are always questions from new graduates to think if focused industries would have a higher demand in employment."
-  })
+
   # dataset
   national_vs_states_df <- reactive({
     national_data <- read_xlsx("server/dataset/national_data.xlsx") %>%
