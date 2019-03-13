@@ -1,38 +1,38 @@
 gather_server <- function(input, output) {
   ## Jacinda's Analysis Server##
-  gender_race_data <- reactive({
-    gender_race_data <- read.csv("server/dataset/gender_race_data.csv")
+  gender_race_data <- reactive({ 
+    gender_race_data <- read.csv("server/dataset/gender_race_data.csv") # reads the gender_race_data.csv file and stores it in gender_race_data
   })
 
-  output$header <- renderText({
+  output$gender_header <- renderText({ # displays an "observations" header 
     "Observations"
   })
 
-  output$first_section_content <- renderText({
+  output$gender_first_section_content <- renderText({ # displays the analysis for the observations section
     "While analyzing the graphs, there are many occupations that have a great gap between the number of male and female workers. There are only a handful of occupations that have a balanced number
     of different genders in a specific job. This analysis takes a closer look at the similarities between occupations that have a greater difference between male and female employees and explain why this
     gap exist. The average ethnicity distribution of all occupations is graphed and evaluated to understand the level of diversity in the workplace."
   })
 
-  output$questions <- renderText({
+  output$gender_questions <- renderText({ # displays a "questions" header
     "Questions"
   })
 
-  output$question_1 <- renderText({
+  output$gender_question_1 <- renderText({ # displays the first analysis question
     "Which occupation in the top 10 jobs with the most number of employees has the greatest difference in the number of male and female employees? Why does that gap exist?"
   })
-  output$question_1_content <- renderText({
+  output$gender_question_1_content <- renderText({ # displays the analysis for the first question
     "By looking at the graph, the occupation with the greatest gap between male and female employees is in the category of natural resources, construction, and maintenance. 
     This may be because of cultural stereotypes that women are not as suited for labor-intensive jobs as  men. This inference is supported by an article titled \"Where are all the women? Why 99% of construction
     site workers are male\" says that \"part of the problem is sexism: research shows that more than half of female construction workers said they were treated worse than men because of their gender\". Often
     times, women are not held in the same regards as men. This category is an outlier in the gender difference data set because it has the greatest range of 10,514 more male workers than female workers. "
   })
 
-  output$question_2 <- renderText({
+  output$gender_question_2 <- renderText({ # displays the second analysis question
     "What are the similarities in the fields that are dominated by one specific gender?"
   })
 
-  output$gender_employee <- renderPlot({
+  output$gender_employee <- renderPlot({ # plots a bar graph showing the gender difference in the top 10 occupations with the most number of employees
     sort_data <- gender_race_data() %>%
       arrange(-Total_Number_Of_Workers) %>%
       head(10) %>%
@@ -46,15 +46,15 @@ gather_server <- function(input, output) {
       theme(axis.text.x = element_text(angle = 90, hjust = 1)) + ylab("Employees")
   })
 
-  output$male_difference_table_title <- renderText({
+  output$male_difference_table_title <- renderText({ # displays the table title with more male than female workers 
     "Top 10 Occupations with More Male Employees"
   })
 
-  output$female_difference_table_title <- renderText({
+  output$female_difference_table_title <- renderText({ # displays the table title with more female than male workers 
     "Top 10 Occupations with More Female Employees"
   })
 
-  output$male_difference_table <- renderTable({
+  output$male_difference_table <- renderTable({ # displays a table that shows the top 10 jobs that have more males than females 
     sort_data <- gender_race_data() %>% mutate(diff_gender = Male_Number_Of_Workers - Female_Number_Of_Workers) %>% na.omit() %>% arrange(-diff_gender) %>% head(10) %>% select(Occupation, diff_gender)
 
     colnames(sort_data)[2] <- "Difference of Male Over Female Employees"
@@ -62,7 +62,7 @@ gather_server <- function(input, output) {
     sort_data
   })
 
-  output$question_2_content <- renderText({
+  output$gender_question_2_content <- renderText({ # displays analysis for question two
     "Looking at the categories of the top ten fields that are dominated by men and female respectively, there are some trends to be noted. Most of the male-dominated occupations (represented by the positive difference) 
     are in the transportation and construction area. On the other hand, most of the female-dominated occupations (represented by the negative difference) are in management and in the healthcare department. Comparing the minimum (representing
     the occupation that has more female than male workers) and maximum (representing the occupation that has more male than female workers) of the gender difference column, it is evident that the gender difference is almost twice as large in the natural resources
@@ -70,7 +70,7 @@ gather_server <- function(input, output) {
     in the most female-dominated job because it is more culturally common for males to work in the management and business field as it is for women to work in maintenance and construction."
   })
 
-  output$female_difference_table <- renderTable({
+  output$female_difference_table <- renderTable({ # displays a table that shows the top 10 jobs that have more emales than males 
     sort_data <- gender_race_data() %>% mutate(diff_gender = Male_Number_Of_Workers - Female_Number_Of_Workers) %>% na.omit() %>% arrange(diff_gender) %>% head(10) %>% select(Occupation, diff_gender)
 
     colnames(sort_data)[2] <- "Difference of Female Over Male Employees"
@@ -78,15 +78,15 @@ gather_server <- function(input, output) {
     sort_data
   })
 
-  output$question_3 <- renderText({
+  output$gender_question_3 <- renderText({ # displays the third analysis question
     "What do the average ethnicity distributions represent?"
   })
 
-  output$pie_title <- renderText({
+  output$gender_pie_title <- renderText({ # displays the title of the pie chart for the third analysis question
     "Mean Ethnicity Distribution of All Occupations in 2018"
   })
 
-  output$management_pie <- renderPlot({
+  output$ethnicity_pie <- renderPlot({ # displays a pie chart representing the average ethnicity distribution for all occupations 
     filter_data <- gender_race_data() %>%
       select(
         Percent_White_Employed,
@@ -107,16 +107,16 @@ gather_server <- function(input, output) {
     pie(filter_data_values, labels = filter_data_colnames, col = c("purple", "green", "blue", "pink"), density = 40)
   })
 
-  output$question_3_content <- renderText({
+  output$gender_question_3_content <- renderText({ # displays the third question's analysis
     "Looking at the average ethnicity distributions for all the occupations is important as it shows the level of diversity in the workplace. Analyzing this pie chart, it is evident
     that there is a definite lack of diversity as 75% of the employees are white. It is also significant to note that out of the three minorities, there is typically as a lesser Asian representation in the workforce."
   })
   
-  output$conclusion <- renderText({
+  output$gender_conclusion <- renderText({ # displays the "conclusion" header
     "Conclusion"
   })
   
-  output$conclusion_content <- renderText({
+  output$gender_conclusion_content <- renderText({ # displays the conclusion content 
     "Overall, this analysis showed the areas of focus that society needs to be aware of and address. As shown on the first plot, there are still jobs with major gap in the number of female and male workers. The stereotype that women are not suited for labor-intensive jobs needs to be broken and treatment towards women in the more male-dominated occupations must to be improved. This will help better balance the number of workers in the natural resources and construction field. The second table shows that even when there are jobs that have more female workers, the gap is not as significant as to when the occupation has more male workers. There are also obvious similarities between the jobs that have more of one gender employees. Therefore, society should continue to encourage women not only to enter the workforce, but to enter fields that are more heavily male-dominated. 
     The pie chart shows the need to increase the level of diversity in all occupations. More diversity in the workplace brings in a variety of perspectives and experiences which can greatly enhance a project or task."
   })
