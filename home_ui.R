@@ -6,11 +6,19 @@ home <- tabPanel(
   mainPanel(
     # text descripting the project
     p("Our project studies the distribution of wages among occupations. 
-      Since the wage varies from each states, we chose states with the highest and lowest GDP and compare them with nation wages."),
+      Since the wage varies from each states, we chose states with the highest and lowest GDP and compare them with nation wages. 
+      In this case for 2017 the state with the highest GDP is Washington, and the state with the lowest GDP is Connecticut.
+      Comparing these states will help us develop a deeper understanding regarding each states' focus within their respective economy.
+      For example, if there is a higher wage towards technology related fields in Washington compared to Connecticut, then there is a trend
+      that Washington has a stronger focus towards technology related careers.
+      "),
     br(),
     h1("Page Description"),
     br(),
-    p("Wage tab provide a distribution of state GDP in a map format. It also shows the difference between states and national occupational wage statistic using
-      Gender shows the difference between male and female’s salary within the same occupation field.")
+    p("The 'Wage' tab provides a description of the states' GDP in a map format. 
+      It also describes how GDP affect's each states occupation's wage and total number of employees relating to that."),
+    br(),
+    p("The 'Gender' tab describes the distribution of occupations across men and women and difference races as well.
+      This helps us understand if there is a lack of a diversity within an occupation field.")
   )
 )
