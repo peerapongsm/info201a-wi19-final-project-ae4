@@ -6,6 +6,7 @@ source("sarah_ui.R")
 source("kelly_ui.R")
 
 gather_ui <- navbarPage(
+  theme = "shiny.css",
   "US Occupational Statistics",
   home,
 
