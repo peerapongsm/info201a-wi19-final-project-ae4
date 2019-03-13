@@ -13,13 +13,18 @@ gather_ui = navbarPage (
     mainPanel(
       # text descripting the project
       p("Our project studies the distribution of wages among occupations. 
-        Since the wage varies from each states, we chose states with the highest and lowest GDP and compare them with nation wages."),
+        Since the wage varies from each states, we chose states with the highest and lowest GDP and compare them with national wages. 
+        Nowadays, there is an obvious gender imbalance in certain industries. Race diversities is also a topic that got brought up often by companies.
+        So we deceide to analyse occupational wage data from gender and race perspectives and also analyse the regular occupational dataset. In doing so,
+        we hope to address some of the issues that is occuring in work place nowadays."),
       br(),
       h1("Page Description"),
       br(),
-      p("Wage tab provide a distribution of state GDP in a map format. It also shows the difference between states and national occupational wage statistic using "),
+      p("Wage tab provide a distribution of state GDP in a map format. 
+        It also shows the difference between states and national occupational wage statistic using states with the highest and lowest GDP."),
       br(),
-      p("Gender shows the difference between male and female’s salary within the same occupation field.")
+      p("Gender shows occupations that have the greatest gender imbalance and occupations that are dominated by one particular gender.
+        It also shows the diversity in occupation distributions among races.")
       
       )
   ),
