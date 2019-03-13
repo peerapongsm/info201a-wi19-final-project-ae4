@@ -1,86 +1,62 @@
-library('geojson')
-library("geojsonio")
-library("leaflet")
-library("readxl")
-library("dplyr")
-library("tidyr")
-library("ggplot2")
-options(scipen = 999)
-
 kelly_server <- function(input, output){
-  states <- geojson_read("dataset/us-states.json", what = "sp")
-  gdp_2017  = read_xlsx("dataset/gdp.xlsx")
-  state_df <- read_xlsx("dataset/states_wage.xlsx") %>% 
-    select(STATE, OCC_TITLE, OCC_GROUP, A_MEAN, H_MEAN, TOT_EMP)
   
-  arrange_data = reactive({
-    filter_data <- state_df %>% filter(OCC_GROUP == input$plot_occ) %>% 
-      filter(STATE == input$plot_state)
-
-    if(input$plot_value == "A_MEAN"){
-      filter_data <- filter_data %>% subset(A_MEAN != "#" & A_MEAN != "*")
-      if (input$plot_select == "top") {
-        filter_data <- filter_data %>% arrange(A_MEAN)
-      } else {
-        filter_data <- filter_data %>% arrange(-A_MEAN)
-      }
-    } else if(input$plot_value == "H_MEAN"){
-      filter_data <- filter_data %>% subset(H_MEAN != "#" & H_MEAN != "*")
-      if (input$plot_select == "top") {
-        filter_data <- filter_data %>% arrange(H_MEAN)
-      } else {
-        filter_data <- filter_data %>% arrange(-H_MEAN)
-      }
-    } else {
-      filter_data <- filter_data %>% subset(TOT_EMP != "**")
-      if (input$plot_select == "top") {
-        filter_data <- filter_data %>% arrange(TOT_EMP)
-      } else {
-        filter_data <- filter_data %>% arrange(-TOT_EMP)
-      }
-    }
+  #A data set of the states
+  state_df = reactive({
+    state_df <- read_xlsx("dataset/state_data.xlsx") %>% 
+      select(STATE, OCC_TITLE, OCC_GROUP, A_MEAN, H_MEAN, TOT_EMP) %>% 
+      subset(A_MEAN != "#" & A_MEAN != "*" & 
+               H_MEAN != "#" & H_MEAN != "*" & 
+               TOT_EMP != "**")
   })
-  #Temporaily rename columns
-  colnames(gdp_2017) <- letters[1:10]
   
-  #Takes the rows that are states
-  #Takes the first two columns and renames to state and gdp_2017
-  gdp <- gdp_2017[gdp_2017$a %in% state.name,] %>% select(a,b) %>% 
-    rename("state" = a,"gdp_2017" = b)
-  
-  #Adds in District of Columbia and Puerto Rico rows to the gdp dataframe
-  left_over <- data.frame(state = c("District of Columnbia","Puerto Rico"), gdp_2017 = c(0,0))
-  gdp = rbind(gdp,left_over)
-  
-  state_df <- state_df %>% subset(A_MEAN != "#" & A_MEAN != "*" & 
-                                    H_MEAN != "#" & H_MEAN != "*" & 
-                                    TOT_EMP != "**" 
-                                    )
-  state_df[4:6] <- lapply(state_df[4:6], as.numeric)
-  states_summarized <- state_df %>%
-    group_by(STATE) %>% summarize(
-      avg_hour_wage = round(mean(H_MEAN, na.rm = TRUE), 2),
-      avg_total_employee = round(mean(TOT_EMP, na.rm = TRUE), 2)
-    ) %>%
-    filter(STATE !=  "Guam" & STATE != "Virgin Islands")
-
-  
-  #Creates levels to match with the states json
-  levels = states$NAME
-  rearranged_states_summarized <- as.data.frame(states_summarized %>% mutate(
-    state = factor(STATE, levels = levels)) %>%
-      arrange(state))
-  rearranged_gdp <- as.data.frame(gdp %>% mutate(
-    state = factor(state, levels = levels)) %>% 
-      arrange(state)
-  )
-  
-  #Adds another column
-  states@data = states@data %>% mutate(gdp = rearranged_gdp$gdp_2017,
-                                       hourly_wage = rearranged_states_summarized$avg_hour_wage,
-                                       total_employee = rearranged_states_summarized$avg_total_employee)
-  
+  gdp_2017 = reactive({
+    gdp_2017<- read_xlsx("dataset/gdp_2017.xlsx")
+  })
+ 
+  #This creates a map of the US that either shows the United States' GDP, Average Salary, and Average Hourly Wage
+  #The user can also over over the state to reveal a specfic value related 
   output$map <- renderLeaflet({
+    gdp_2017 = gdp_2017()
+    states <- geojson_read("dataset/us-states.json", what = "sp")
+    
+    #Temporaily rename columns
+    colnames(gdp_2017) <- letters[1:10]
+    
+    #Takes the rows that are states
+    #Takes the first two columns and renames to state and gdp_2017
+    gdp <- gdp_2017[gdp_2017$a %in% state.name,] %>% select(a,b) %>% 
+      rename("state" = a,"gdp_2017" = b)
+    
+    #Adds in District of Columbia and Puerto Rico rows to the gdp dataframe
+    left_over <- data.frame(state = c("District of Columnbia","Puerto Rico"), gdp_2017 = c(0,0))
+    gdp = rbind(gdp,left_over)
+    
+    state_df <- state_df() 
+    state_df[4:6] <- lapply(state_df[4:6], as.numeric)
+    states_summarized <- state_df %>%
+      group_by(STATE) %>% summarize(
+        avg_hour_wage = round(mean(H_MEAN, na.rm = TRUE), 2),
+        avg_total_employee = round(mean(TOT_EMP, na.rm = TRUE), 2)
+      ) %>%
+      filter(STATE !=  "Guam" & STATE != "Virgin Islands")
+    
+    
+    #Creates levels to match with the states json
+    levels = states$NAME
+    rearranged_states_summarized <- as.data.frame(states_summarized %>% mutate(
+      state = factor(STATE, levels = levels)) %>%
+        arrange(state))
+    rearranged_gdp <- as.data.frame(gdp %>% mutate(
+      state = factor(state, levels = levels)) %>% 
+        arrange(state)
+    )
+    
+    #Adds another column
+    states@data = states@data %>% mutate(gdp = rearranged_gdp$gdp_2017,
+                                         hourly_wage = rearranged_states_summarized$avg_hour_wage,
+                                         total_employee = rearranged_states_summarized$avg_total_employee)
+    
+    
     
     if(input$map_value == "gdp"){
     bins <- seq(-2,5,1)
@@ -125,9 +101,45 @@ kelly_server <- function(input, output){
         labelOptions = labelOptions(style = list("font-weight" = "normal", padding = "3px 8px"),textsize = "15px",direction = "auto")
       )%>%  addLegend(pal = pal, title = map_title, values = map_value, position = "bottomleft", opacity = 2)
   })
-
+  
+  #This creates a bar graph that uses the states dataframe
   output$plot <- renderPlot({
-    arrange_data <- arrange_data() %>% head(5)
+    
+    filter_data <- state_df() 
+    
+    filter_data <- filter_data %>% filter(OCC_GROUP == input$plot_occ) %>% 
+      filter(STATE == str_to_title(input$plot_state))
+    
+    if(input$plot_value == "A_MEAN"){
+      filter_data <- filter_data 
+      if (input$plot_select == "top") { 
+        top_str <- "Highest"
+        filter_data <- filter_data %>% arrange(A_MEAN)
+      } else {
+        filter_data <- filter_data %>% arrange(desc(A_MEAN))
+        top_str <- "Lowest"
+      }
+    } else if(input$plot_value == "H_MEAN"){
+      filter_data <- filter_data
+      if (input$plot_select == "top") {
+        filter_data <- filter_data %>% arrange(H_MEAN)
+        top_str <- "Highest"
+      } else {
+        filter_data <- filter_data %>% arrange(desc(H_MEAN))
+        top_str <- "Lowest"
+      }
+    } else {
+      filter_data <- filter_data
+      if (input$plot_select == "top") {
+        filter_data <- filter_data %>% arrange(TOT_EMP)
+        top_str <- "Highest"
+      } else {
+        filter_data <- filter_data %>% arrange(desc(TOT_EMP))
+        top_str <- "Lowest"
+      }
+    }
+    
+    filter_data <- filter_data %>% head(5)
     if(input$plot_value == "TOT_EMP"){
       y_title <- "Total Employees"
     } else if (input$plot_value == "H_MEAN"){
@@ -136,12 +148,12 @@ kelly_server <- function(input, output){
       y_title <- "Annual Salary"
     }
     
-    ggplot(data = arrange_data) +
+    ggplot(data = filter_data) +
       geom_col(mapping = aes_string(
         x = "OCC_TITLE",
         y = input$plot_value
       ), fill = "Pink", alpha = 0.4) + labs(
-        title = paste("Top 5 Occupations with the Lowest", y_title, "in", input$plot_state),
+        title = paste("Top 5 Occupations with the", top_str , y_title, "in", input$plot_state),
         x = "Occupation",
         y = y_title
       ) + theme(
@@ -155,33 +167,38 @@ kelly_server <- function(input, output){
   })
   
   output$table <- renderDataTable({
-    filter_data <- state_df %>% filter(OCC_GROUP == input$table_occ) %>% 
-      filter(STATE == input$table_state)
+    filter_data <- state_df() %>% filter(OCC_GROUP == input$table_occ) %>% 
+      filter(STATE == str_to_title(input$table_state))
     
-    if(input$table_value == "A_MEAN"){
-      filter_data <- filter_data %>% subset(A_MEAN != "#" & A_MEAN != "*")
-      if (input$plot_select == "top") {
-        filter_data <- filter_data %>% arrange(A_MEAN)
-      } else {
-        filter_data <- filter_data %>% arrange(-A_MEAN)
+    filter_data <- filter_data %>% select(STATE, OCC_TITLE, input$table_value)
+    
+    if(input$table_value == "TOT_EMP"){
+      
+      if(input$table_select == "top"){
+        filter_data <- filter_data %>% arrange(TOT_EMP)
+      } else{
+        filter_data <- filter_data %>% arrange(desc(TOT_EMP))
       }
-    } else if(input$table_value == "H_MEAN"){
-      filter_data <- filter_data %>% subset(H_MEAN != "#" & H_MEAN != "*")
-      if (input$table_select == "top") {
-        filter_data <- filter_data %>% arrange(H_MEAN)
-      } else {
-        filter_data <- filter_data %>% arrange(-H_MEAN)
+    } else if(input$table_value == "A_MEAN"){
+      
+      if(input$table_select == "top"){
+        filter_data <- filter_data %>% arrange(A_MEAN)
+      } else{
+        filter_data <- filter_data %>% arrange(desc(A_MEAN))
       }
     } else {
-      filter_data <- filter_data %>% subset(TOT_EMP != "**")
-      if (input$table_select == "top") {
-        filter_data <- filter_data %>% arrange(TOT_EMP)
-      } else {
-        filter_data <- filter_data %>% arrange(-TOT_EMP)
+      
+      if(input$table_select == "top"){
+        filter_data <- filter_data %>% arrange(H_MEAN)
+      } else{
+        filter_data <- filter_data %>% arrange(desc(H_MEAN))
       }
     }
     
-    filter_data %>% select(STATE, OCC_TITLE, input$table_value) %>% head(10)
+    filter_data  %>% head(10)
+    
   })
+  
+  
   
 }
