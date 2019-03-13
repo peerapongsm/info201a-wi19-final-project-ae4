@@ -46,7 +46,7 @@ wage_sandbox <- tabPanel(
     ),
     tabPanel(
       "Occupations Table",
-      hr("Occupations Data Table"),
+      hr("Occupations Table"),
       sidebarLayout(
         sidebarPanel(
           radioButtons(
@@ -72,7 +72,7 @@ wage_sandbox <- tabPanel(
           p("TOT_EMP: The average total number of employees for the occupation"),
           p("H_MEAN: The average hourly mean for the occupation"),
           p("A_MEAN: The average annual salary for the occupation"),
-          dataTableOutput("table")
+          tableOutput("table")
         )
       )
     )
