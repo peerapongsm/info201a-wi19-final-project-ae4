@@ -15,6 +15,7 @@ national_vs_states_df <- left_join(national_df, washington_vs_connecticut_df, by
 
 national_vs_states_df[4:11] <- lapply(national_vs_states_df[4:11], as.numeric)
 national_vs_states_df <- na.omit(national_vs_states_df)
+gdp_2017  = read_xlsx("dataset/gdp_2017.xlsx")
 
 sarah_server <- function(input, output) {
   # map
@@ -185,11 +186,6 @@ sarah_server <- function(input, output) {
         x = "Occupation",
         y = "Employment number",
         color = "State Data"
-      # )+ theme(
-      #   axis.text.x = element_text(face="bold", 
-      #                              size=6, angle=90),
-      #   axis.text.y = element_text(face="bold", 
-      #                              size=6)
       )
   })
  

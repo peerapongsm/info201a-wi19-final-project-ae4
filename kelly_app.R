@@ -1,0 +1,15 @@
+library("shiny")
+library('geojson')
+library("geojsonio")
+library("leaflet")
+library("readxl")
+library("dplyr")
+library("tidyr")
+library("ggplot2")
+library("stringr")
+options(scipen = 999)
+
+source("kelly_ui.R")
+source("kelly_server.R")
+
+shinyApp(ui = kelly_ui, server = kelly_server)
