@@ -1,11 +1,11 @@
 gender_race_analysis = tabPanel(
   "Analyzing Tables and Graphs",
   tags$section(id =  "gender_first_section", # first section is titled "observations"
-               h2(textOutput("gender_header")), # "observations" header
+               h1(textOutput("gender_header")), # "observations" header
                textOutput("gender_first_section_content") # displays the content for the observations header 
                ),
   tags$section(id = "gender_question_1_second_section", # first analysis question section
-              h2(textOutput("gender_questions")), # "questions" header
+              h1(textOutput("gender_questions")), # "questions" header
               strong((textOutput("gender_question_1"))), # prints out the first question
               br(), # line break
               plotOutput("gender_employee", width = "100%", height = "550px"), # displays the bar chart comparing gender difference in the top 10 occupations with most number of employees
@@ -31,7 +31,7 @@ gender_race_analysis = tabPanel(
                textOutput("gender_question_3_content") # prints out the analysis for the third question
                ),
   tags$section(id = "gender_fourth_section", # conclusion section
-               h2(textOutput("gender_conclusion")), # prints out the "conclusion" header
+               h1(textOutput("gender_conclusion")), # prints out the "conclusion" header
                textOutput("gender_conclusion_content") # prints out the conclusion content 
   )
 )
