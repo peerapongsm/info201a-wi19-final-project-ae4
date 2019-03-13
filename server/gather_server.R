@@ -202,20 +202,20 @@ gather_server <- function(input, output) {
   })
 
   output$pie_header <- renderText({
-    if (is.null(input$table_row_last_clicked)) {
+    if (is.null(input$gender_table_row_last_clicked)) {
       "Please select an occupation from table to plot a pie chart"
     } else {
       filter_data <- arrange_data()
       paste(
-        "Pie chart of ethnicity employment percentages for", filter_data[input$table_rows_selected, 3]
+        "Pie chart of ethnicity employment percentages for", filter_data[input$gender_table_rows_selected, 3]
       )
     }
   })
 
   output$pie <- renderPlot({
-    if (!is.null(input$table_row_last_clicked)) {
+    if (!is.null(input$gender_table_row_last_clicked)) {
       filter_data <- arrange_data()
-      title <- filter_data[input$table_rows_selected, 3]
+      title <- filter_data[input$gender_table_rows_selected, 3]
       filter_data <- filter_data %>%
         filter(grepl(title, Occupation)) %>%
         select(
