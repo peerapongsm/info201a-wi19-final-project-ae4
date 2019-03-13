@@ -1,7 +1,7 @@
 gather_server = function(input, output) {
   ## Jacinda's Analysis Server##
   gender_race_data <- reactive({
-    read.csv("dataset/gender_race_data.csv")})
+    read.csv("server/dataset/gender_race_data.csv")})
 
   output$header <- renderText({
     "Observations"
@@ -240,10 +240,10 @@ gather_server = function(input, output) {
 
   ## Sarah's Server##
   national_vs_states_df <- reactive({
-    national_data <- read_xlsx("dataset/national_data.xlsx") %>%
+    national_data <- read_xlsx("server/dataset/national_data.xlsx") %>%
       filter(H_MEAN != "*") %>%
       select(OCC_TITLE, OCC_GROUP, H_MEAN) %>% rename("national_hour_mean" = H_MEAN)
-    state_data <- read_xlsx("dataset/state_data.xlsx")
+    state_data <- read_xlsx("server/dataset/state_data.xlsx")
     WA_data <- state_data %>% filter(STATE == "Washington", H_MEAN != "*", H_MEAN != "#",
                                      TOT_EMP != "**", TOT_EMP != "#") %>%
                select(OCC_TITLE, H_MEAN, TOT_EMP) %>% rename("washington_hour_mean" = H_MEAN,
@@ -259,7 +259,7 @@ gather_server = function(input, output) {
   })
   
   output$gdpMap <- renderLeaflet({
-    states <- geojson_read("dataset/us-states.json", what = "sp")
+    states <- geojson_read("server/dataset/us-states.json", what = "sp")
     rearranged_gdp = rearranged_gdp()
     states@data <- states@data %>% mutate(gdp = rearranged_gdp$gdp_2017)
     bins <- seq(-2, 5, 1)
@@ -333,11 +333,11 @@ gather_server = function(input, output) {
   })
   # About links
   output$data2 <- renderUI({
-    tagList("- ", a("National Occupational wages and employment dataset", href = "https://www.bls.gov/oes/current/oes_nat.htm?fbclid=IwAR1bsqWqpedgsKlPKyt-FVu8KBPmyARXdAZL-B7lt0_CQDXU-yBER4l8AlM"))
+    tagList("- ", a("National Occupational wages and employment server/dataset", href = "https://www.bls.gov/oes/current/oes_nat.htm?fbclid=IwAR1bsqWqpedgsKlPKyt-FVu8KBPmyARXdAZL-B7lt0_CQDXU-yBER4l8AlM"))
   })
   # About links
   output$data3 <- renderUI({
-    tagList("- ", a("States Occupational wages and employment dataset", href = "https://www.bls.gov/oes/current/oessrcst.htm?fbclid=IwAR3S4-BpXYofas6If42fOReztuCYdWgVq24MCXFLS7KU6a0BrJk7h7Zg5bQ"))
+    tagList("- ", a("States Occupational wages and employment server/dataset", href = "https://www.bls.gov/oes/current/oessrcst.htm?fbclid=IwAR3S4-BpXYofas6If42fOReztuCYdWgVq24MCXFLS7KU6a0BrJk7h7Zg5bQ"))
   })
   # About links
   output$data4 <- renderUI({
@@ -416,7 +416,7 @@ gather_server = function(input, output) {
   
   #A data set of the states
   state_df = reactive({
-    state_df <- read_xlsx("dataset/state_data.xlsx") %>% 
+    state_df <- read_xlsx("server/dataset/state_data.xlsx") %>% 
       select(STATE, OCC_TITLE, OCC_GROUP, A_MEAN, H_MEAN, TOT_EMP) %>% 
       subset(A_MEAN != "#" & A_MEAN != "*" & 
                H_MEAN != "#" & H_MEAN != "*" & 
@@ -424,7 +424,7 @@ gather_server = function(input, output) {
   })
   
   rearranged_gdp = reactive({
-    gdp_2017<- read_xlsx("dataset/gdp_2017.xlsx") %>% select(state, gdp_2017)
+    gdp_2017<- read_xlsx("server/dataset/gdp_2017.xlsx") %>% select(state, gdp_2017)
     gdp = gdp_2017[gdp_2017$state %in% state.name,]
     left_over <- data.frame(state = c("District of Columnbia","Puerto Rico"), gdp_2017 = c(0,0))
     gdp = rbind(gdp,left_over)
@@ -438,7 +438,7 @@ gather_server = function(input, output) {
   #This creates a map of the US that either shows the United States' GDP, Average Salary, and Average Hourly Wage
   #The user can also over over the state to reveal a specfic value related 
   output$map <- renderLeaflet({
-    states <- geojson_read("dataset/us-states.json", what = "sp")
+    states <- geojson_read("server/dataset/us-states.json", what = "sp")
     rearranged_gdp = rearranged_gdp()
     state_df <- state_df() 
     state_df[4:6] <- lapply(state_df[4:6], as.numeric)
