@@ -1,9 +1,9 @@
-source("home_ui.R")
-source("about_ui.R")
-source("peeras_jeng_ui.R")
-source("peeras_jeng_analysis_ui.R")
-source("sarah_ui.R")
-source("kelly_ui.R")
+source("ui/home_ui.R")
+source("ui/about_ui.R")
+source("ui/peeras_jeng_ui.R")
+source("ui/peeras_jeng_analysis_ui.R")
+source("ui/sarah_ui.R")
+source("ui/kelly_ui.R")
 
 gather_ui <- navbarPage(
   "US Occupational Statistics",
