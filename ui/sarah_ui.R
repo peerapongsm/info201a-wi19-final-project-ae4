@@ -56,3 +56,4 @@ wage_analysis <- tabPanel(
                  However, there is not an obvious trend in jobs that they are looking at.")
                )
   )
+)
