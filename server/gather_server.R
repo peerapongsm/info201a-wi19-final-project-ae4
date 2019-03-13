@@ -383,23 +383,6 @@ gather_server <- function(input, output) {
       )
   })
 
-  # About links
-  output$data1 <- renderUI({
-    tagList("- ", a("Labor Force Statistics from the Current Population", href = "https://www.bls.gov/cps/cpsaat39.htm"))
-  })
-  # About links
-  output$data2 <- renderUI({
-    tagList("- ", a("National Occupational wages and employment server/dataset", href = "https://www.bls.gov/oes/current/oes_nat.htm?fbclid=IwAR1bsqWqpedgsKlPKyt-FVu8KBPmyARXdAZL-B7lt0_CQDXU-yBER4l8AlM"))
-  })
-  # About links
-  output$data3 <- renderUI({
-    tagList("- ", a("States Occupational wages and employment server/dataset", href = "https://www.bls.gov/oes/current/oessrcst.htm?fbclid=IwAR3S4-BpXYofas6If42fOReztuCYdWgVq24MCXFLS7KU6a0BrJk7h7Zg5bQ"))
-  })
-  # About links
-  output$data4 <- renderUI({
-    tagList("- ", a("Where are all women?", href = "https://www.theguardian.com/careers/careers-blog/2015/may/19/where-are-all-the-women-why-99-of-construction-site-workers-are-male"))
-  })
-
   # Connecticut difference 5 jobs
   output$ctDiff <- renderPlot({
     job <- national_vs_states_df() %>%

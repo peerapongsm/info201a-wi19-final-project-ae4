@@ -15,9 +15,9 @@ about <-  tabPanel(
       diversity in the workplace brings in a variety of perspectives and experiences which can greatly enhance a project or task."),
     br(),
     p("We used a lot of great data sets in working on this project:"),
-    uiOutput("data1"),
-    uiOutput("data2"),
-    uiOutput("data3"),
-    uiOutput("data4")
+    p(tagList("- ", a("Labor Force Statistics from the Current Population", href = "https://www.bls.gov/cps/cpsaat39.htm"))),
+    p(tagList("- ", a("National Occupational wages and employment server/dataset", href = "https://www.bls.gov/oes/current/oes_nat.htm?fbclid=IwAR1bsqWqpedgsKlPKyt-FVu8KBPmyARXdAZL-B7lt0_CQDXU-yBER4l8AlM"))),
+    p(tagList("- ", a("States Occupational wages and employment server/dataset", href = "https://www.bls.gov/oes/current/oessrcst.htm?fbclid=IwAR3S4-BpXYofas6If42fOReztuCYdWgVq24MCXFLS7KU6a0BrJk7h7Zg5bQ"))),
+    p(tagList("- ", a("Where are all women?", href = "https://www.theguardian.com/careers/careers-blog/2015/may/19/where-are-all-the-women-why-99-of-construction-site-workers-are-male")))
     )
   )
