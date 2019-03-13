@@ -260,24 +260,30 @@ gather_server = function(input, output) {
   
   output$gdpMap <- renderLeaflet({
     states <- geojson_read("dataset/us-states.json", what = "sp")
-    gdp_2017 <- read_xlsx("dataset/gdp_2017.xlsx")
-    colnames(gdp_2017) <- letters[1:10]
-    gdp <- gdp_2017[gdp_2017$a %in% state.name, ] %>%
-      select(a, b) %>%
-      rename(
-        "state" = a,
-        "gdp_2017" = b
-      )
-    left_over <- data.frame(state = c("District of Columnbia", "Puerto Rico"), gdp_2017 = c(0, 0))
-    gdp <- rbind(gdp, left_over)
-    levels <- states$NAME
-    rearranged_gdp <- as.data.frame(gdp %>%
-      mutate(
-        state = factor(state, levels = levels)
+    gdp_2017<- read_xlsx("dataset/gdp_2017.xlsx") %>% select(state, gdp_2017)
+    gdp = gdp_2017[gdp_2017$state %in% state.name,]
+    left_over <- data.frame(state = c("District of Columnbia","Puerto Rico"), gdp_2017 = c(0,0))
+    gdp = rbind(gdp,left_over)
+    
+    state_df <- state_df() 
+    state_df[4:6] <- lapply(state_df[4:6], as.numeric)
+    states_summarized <- state_df %>%
+      group_by(STATE) %>% summarize(
+        avg_hour_wage = round(mean(H_MEAN, na.rm = TRUE), 2),
+        avg_total_employee = round(mean(TOT_EMP, na.rm = TRUE), 2)
       ) %>%
-      arrange(state))
+      filter(STATE !=  "Guam" & STATE != "Virgin Islands")
+    
+    levels = states$NAME
+    rearranged_states_summarized <- as.data.frame(states_summarized %>% mutate(
+      state = factor(STATE, levels = levels)) %>%
+        arrange(state))
+    rearranged_gdp <- as.data.frame(gdp %>% mutate(
+      state = factor(state, levels = levels)) %>% 
+        arrange(state)
+    )
+    
     states@data <- states@data %>% mutate(gdp = rearranged_gdp$gdp_2017)
-
     bins <- seq(-2, 5, 1)
     pal <- colorBin(palette = "RdYlGn", domain = states@data$gdp, bins = bins)
 
@@ -435,54 +441,25 @@ gather_server = function(input, output) {
                TOT_EMP != "**")
   })
   
-  gdp_2017 = reactive({
-    gdp_2017<- read_xlsx("dataset/gdp_2017.xlsx")
-  })
-  
   #This creates a map of the US that either shows the United States' GDP, Average Salary, and Average Hourly Wage
   #The user can also over over the state to reveal a specfic value related 
   output$map <- renderLeaflet({
-    gdp_2017 = gdp_2017()
     states <- geojson_read("dataset/us-states.json", what = "sp")
-    
-    #Temporaily rename columns
-    colnames(gdp_2017) <- letters[1:10]
-    
-    #Takes the rows that are states
-    #Takes the first two columns and renames to state and gdp_2017
-    gdp <- gdp_2017[gdp_2017$a %in% state.name,] %>% select(a,b) %>% 
-      rename("state" = a,"gdp_2017" = b)
-    
-    #Adds in District of Columbia and Puerto Rico rows to the gdp dataframe
+    gdp_2017<- read_xlsx("dataset/gdp_2017.xlsx") %>% select(state, gdp_2017)
+    gdp = gdp_2017[gdp_2017 %in% states$region,]
     left_over <- data.frame(state = c("District of Columnbia","Puerto Rico"), gdp_2017 = c(0,0))
-    gdp = rbind(gdp,left_over)
-    
-    state_df <- state_df() 
-    state_df[4:6] <- lapply(state_df[4:6], as.numeric)
-    states_summarized <- state_df %>%
-      group_by(STATE) %>% summarize(
-        avg_hour_wage = round(mean(H_MEAN, na.rm = TRUE), 2),
-        avg_total_employee = round(mean(TOT_EMP, na.rm = TRUE), 2)
-      ) %>%
-      filter(STATE !=  "Guam" & STATE != "Virgin Islands")
-    
-    
-    #Creates levels to match with the states json
+    gdp = rbind(gdp_2017, left_over)
     levels = states$NAME
     rearranged_states_summarized <- as.data.frame(states_summarized %>% mutate(
       state = factor(STATE, levels = levels)) %>%
         arrange(state))
     rearranged_gdp <- as.data.frame(gdp %>% mutate(
       state = factor(state, levels = levels)) %>% 
-        arrange(state)
-    )
-    
+        arrange(state))
     #Adds another column
-    states@data = states@data %>% mutate(gdp = rearranged_gdp$gdp_2017,
+    states@data = states@data %>% mutate(gdp = arrange_gdp$gdp_2017,
                                          hourly_wage = rearranged_states_summarized$avg_hour_wage,
                                          total_employee = rearranged_states_summarized$avg_total_employee)
-    
-    
     
     if(input$map_value == "gdp"){
       bins <- seq(-2,5,1)
