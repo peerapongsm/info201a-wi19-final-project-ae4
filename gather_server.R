@@ -1,4 +1,4 @@
-peeras_jeng_analysis_server = function(input, output) {
+gather_server = function(input, output) {
   
   ##Jacinda's Analysis Server##
   gender_race_data <- read.csv("dataset/gender_race_data.csv")
@@ -237,10 +237,9 @@ peeras_jeng_analysis_server = function(input, output) {
   
   ##Sarah's Server##
   
-  states <- geojson_read("dataset/us-states.json", what = "sp")
-  gdp_2017  = read_xlsx("dataset/qgdpstate0219.xlsx")
-  
   output$gdpMap <- renderLeaflet({
+    states <- geojson_read("dataset/us-states.json", what = "sp")
+    gdp_2017  = read_xlsx("dataset/gdp_2017.xlsx")
     colnames(gdp_2017) = letters[1:10]
     gdp = gdp_2017[gdp_2017$a %in% state.name,] %>% 
       select(a,b) %>% 
@@ -293,7 +292,7 @@ peeras_jeng_analysis_server = function(input, output) {
   
   # Washington difference 5 jobs
   output$waDiff <- renderPlot({
-    job <- head( national_vs_states_df %>%
+    job <- head(national_vs_states_df %>%
                    mutate(diff = washington_hour_mean - national_hour_mean) %>%
                    arrange(desc(diff)) %>% 
                    select(

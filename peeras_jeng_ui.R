@@ -1,5 +1,5 @@
-gender_race_sandbox <- fluidPage(
-  titlePanel(h1("Gender and Ethnicity employment statistic"), windowTitle = "Gender and Race"),
+gender_race_sandbox <- tabPanel(
+  "Gender and Ethnicity employment statistic",
   sidebarLayout(
     sidebarPanel(
       selectInput(
