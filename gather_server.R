@@ -1,7 +1,7 @@
-## Jacinda's Analysis Server##
 gather_server = function(input, output) {
-
-  gender_race_data <- read.csv("dataset/gender_race_data.csv")
+  ## Jacinda's Analysis Server##
+  gender_race_data <- reactive({
+    read.csv("dataset/gender_race_data.csv")})
 
   output$header <- renderText({
     "Observations"
@@ -32,7 +32,7 @@ gather_server = function(input, output) {
   })
 
   output$gender_employee <- renderPlot({
-    arrange_data <- gender_race_data %>%
+    arrange_data <- gender_race_data() %>%
       arrange(-Total_Number_Of_Workers) %>%
       head(10) %>%
       gather(
@@ -54,7 +54,7 @@ gather_server = function(input, output) {
   })
 
   output$male_difference_table <- renderTable({
-    arrange_data <- gender_race_data %>% mutate(diff_gender = Male_Number_Of_Workers - Female_Number_Of_Workers) %>% na.omit() %>% arrange(-diff_gender) %>% head(10) %>% select(Occupation, diff_gender)
+    arrange_data <- gender_race_data() %>% mutate(diff_gender = Male_Number_Of_Workers - Female_Number_Of_Workers) %>% na.omit() %>% arrange(-diff_gender) %>% head(10) %>% select(Occupation, diff_gender)
 
     colnames(arrange_data)[2] <- "Difference of Male Over Female Employees"
 
@@ -70,7 +70,7 @@ gather_server = function(input, output) {
   })
 
   output$female_difference_table <- renderTable({
-    arrange_data <- gender_race_data %>% mutate(diff_gender = Male_Number_Of_Workers - Female_Number_Of_Workers) %>% na.omit() %>% arrange(diff_gender) %>% head(10) %>% select(Occupation, diff_gender)
+    arrange_data <- gender_race_data() %>% mutate(diff_gender = Male_Number_Of_Workers - Female_Number_Of_Workers) %>% na.omit() %>% arrange(diff_gender) %>% head(10) %>% select(Occupation, diff_gender)
 
     colnames(arrange_data)[2] <- "Difference of Female Over Male Employees"
 
@@ -86,7 +86,7 @@ gather_server = function(input, output) {
   })
 
   output$management_pie <- renderPlot({
-    filter_data <- gender_race_data %>%
+    filter_data <- gender_race_data() %>%
       select(
         Percent_White_Employed,
         Percent_Black_or_African_American_Employed,
@@ -114,7 +114,7 @@ gather_server = function(input, output) {
   ## Peerapong's Server##
 
   arrange_data <- reactive({
-    arrange_data <- gender_race_data <- read.csv("dataset/gender_race_data.csv") %>%
+    arrange_data <- gender_race_data() %>%
       mutate(diff_gender = Male_Number_Of_Workers - Female_Number_Of_Workers)
     if (grepl(input$select, "emp") | grepl(input$select, "gdr")) {
       if (grepl(input$radio, "most")) {
@@ -239,6 +239,25 @@ gather_server = function(input, output) {
   })
 
   ## Sarah's Server##
+  national_vs_states_df <- reactive({
+    national_data <- read_xlsx("dataset/national_data.xlsx") %>%
+      filter(H_MEAN != "*") %>%
+      select(OCC_TITLE, OCC_GROUP, H_MEAN) %>% rename("national_hour_mean" = H_MEAN)
+    state_data <- read_xlsx("dataset/state_data.xlsx")
+    WA_data <- state_data %>% filter(STATE == "Washington", H_MEAN != "*", H_MEAN != "#",
+                                     TOT_EMP != "**", TOT_EMP != "#") %>%
+               select(OCC_TITLE, H_MEAN, TOT_EMP) %>% rename("washington_hour_mean" = H_MEAN,
+                                                             "washington_tot_emp" = TOT_EMP)
+    CT_data <- state_data %>% filter(STATE == "Connecticut", H_MEAN != "*", H_MEAN != "#",
+                                     TOT_EMP != "**", TOT_EMP != "#") %>%
+               select(OCC_TITLE, H_MEAN, TOT_EMP) %>% rename("connecticut_hour_mean" = H_MEAN,
+                                                             "connecticut_tot_emp" = TOT_EMP)
+    national_vs_states_df <- left_join(national_data, WA_data, by = "OCC_TITLE")
+    national_vs_states_df <- left_join(national_vs_states_df, CT_data, by = "OCC_TITLE") %>% na.omit()
+    national_vs_states_df[3:7] <- lapply(national_vs_states_df[3:7], as.numeric)
+    national_vs_states_df
+  })
+  
   output$gdpMap <- renderLeaflet({
     states <- geojson_read("dataset/us-states.json", what = "sp")
     gdp_2017 <- read_xlsx("dataset/gdp_2017.xlsx")
@@ -249,7 +268,6 @@ gather_server = function(input, output) {
         "state" = a,
         "gdp_2017" = b
       )
-
     left_over <- data.frame(state = c("District of Columnbia", "Puerto Rico"), gdp_2017 = c(0, 0))
     gdp <- rbind(gdp, left_over)
     levels <- states$NAME
@@ -267,10 +285,9 @@ gather_server = function(input, output) {
       addTiles() %>%
       setView(-97, 39, zoom = 3) %>%
       addPolygons(
-        fillColor = ~ pal(gdp),
+        fillColor = ~pal(gdp),
         weight = 1,
         dashArray = "3",
-        color = "black",
         fillOpacity = 2,
         highlight = highlightOptions(
           weight = 5,
@@ -279,7 +296,7 @@ gather_server = function(input, output) {
           fillOpacity = 0.7,
           bringToFront = TRUE
         ),
-        label = labels,
+        label = states@data$NAME,
         labelOptions = labelOptions(
           style = list("font-weight" = "normal", padding = "3px 8px"),
           textsize = "15px",
@@ -298,18 +315,7 @@ gather_server = function(input, output) {
 
   # Washington difference 5 jobs
   output$waDiff <- renderPlot({
-    national_data <- read_xlsx("dataset/national_data.xlsx") %>%
-      filter(H_MEAN != "*") %>%
-      select(OCC_TITLE, H_MEAN)
-    state_data <- read_xlsx("dataset/state_data.xlsx") %>%
-      filter(STATE == "Washington", H_MEAN != "*") %>%
-      select(OCC_TITLE, H_MEAN)
-    national_vs_states_df <- inner_join(national_data, state_data, by = "OCC_TITLE")
-    colnames(national_vs_states_df)[2] <- "washington_hour_mean"
-    colnames(national_vs_states_df)[3] <- "national_hour_mean"
-    national_vs_states_df[2:3] %>% national_vs_states_df[2:3] %>% round(2)
-    
-    job <- head(national_vs_states_df %>%
+    job <- head(national_vs_states_df() %>%
       mutate(diff = washington_hour_mean - national_hour_mean) %>%
       arrange(desc(diff)) %>%
       select(
@@ -352,7 +358,7 @@ gather_server = function(input, output) {
 
   # Connecticut difference 5 jobs
   output$ctDiff <- renderPlot({
-    job <- national_vs_states_df %>%
+    job <- national_vs_states_df() %>%
       mutate(diff = connecticut_hour_mean - national_hour_mean) %>%
       arrange(desc(diff)) %>%
       select(
@@ -382,14 +388,15 @@ gather_server = function(input, output) {
   # Question: what job has the highest number of employees in Washington
 
   output$employmentWA <- renderPlot({
-    job <- national_vs_states_df %>%
+    job <- national_vs_states_df() %>%
       filter(OCC_GROUP == "detailed") %>%
       arrange(desc(washington_tot_emp)) %>%
       select(OCC_TITLE, washington_tot_emp, washington_hour_mean)
     ggplot(data = head(job, 5)) +
       geom_col(mapping = aes(
         x = OCC_TITLE,
-        y = washington_tot_emp
+        y = washington_tot_emp,
+        fill = OCC_TITLE
       ), position = "dodge") +
       labs(
         title = "Top 5 Employment Occupations in Washington",
@@ -399,14 +406,15 @@ gather_server = function(input, output) {
       )
   })
   output$employmentCT <- renderPlot({
-    job <- national_vs_states_df %>%
+    job <- national_vs_states_df() %>%
       filter(OCC_GROUP == "detailed") %>%
       arrange(desc(connecticut_tot_emp)) %>%
       select(OCC_TITLE, connecticut_tot_emp, connecticut_hour_mean)
     ggplot(data = head(job, 5)) +
       geom_col(mapping = aes(
         x = OCC_TITLE,
-        y = connecticut_tot_emp
+        y = connecticut_tot_emp,
+        fill = OCC_TITLE
       ), position = "dodge") +
       labs(
         title = "Top 5 Employment Occupations in Connecticut",
@@ -513,11 +521,15 @@ gather_server = function(input, output) {
     leaflet(states) %>% 
       addTiles() %>% 
       setView(-97,39, zoom = 3) %>%
-      addPolygons(fillColor = ~pal(map_value), weight = 1, dashArray = "3", color = "black", fillOpacity = 2,
-                  highlight = highlightOptions(weight = 5, color = "#999", dashArray = "", fillOpacity = 0.7,bringToFront = TRUE),
-                  label = labels,
-                  labelOptions = labelOptions(style = list("font-weight" = "normal", padding = "3px 8px"),textsize = "15px",direction = "auto")
-      )%>%  addLegend(pal = pal, title = map_title, values = map_value, position = "bottomleft", opacity = 2)
+      addPolygons(fillColor = ~pal(map_value), weight = 1, dashArray = "3", 
+                  color = "black", fillOpacity = 2,
+                  highlight = highlightOptions(weight = 5, color = "#999", 
+                                               dashArray = "", fillOpacity = 0.7,bringToFront = TRUE),
+                  label = labels, labelOptions = labelOptions(style = list("font-weight" = "normal", 
+                                                                           padding = "3px 8px"),
+                                                              textsize = "15px",direction = "auto")
+      )%>%  addLegend(pal = pal, title = map_title, 
+                      values = map_value, position = "bottomleft", opacity = 2)
   })
   
   #This creates a bar graph that uses the states dataframe
