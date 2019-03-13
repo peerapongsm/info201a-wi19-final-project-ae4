@@ -7,8 +7,8 @@ peeras_jeng_analysis_server = function(input, output) {
   
   output$first_section_content = renderText({
     "While analyzing the graphs, there are many occupations that have a great gap between the number of male and female workers. There are only a handful of occupations that have a balanced number
-    of different genders in a specific job. This analysis take a closer look at the similarities between occupations that have a greater difference between male and female employees and explain why that
-    gap exists."
+    of different genders in a specific job. This analysis takes a closer look at the similarities between occupations that have a greater difference between male and female employees and explain why this
+    gap exist. The average ethnicity distribution of all occupations is graphed and evaluated to understand the level of diversity in the workplace."
   })
   
   output$questions = renderText({
@@ -47,22 +47,29 @@ peeras_jeng_analysis_server = function(input, output) {
     "Top 10 Occupations with More Female Employees"
   })
   
-  output$male_difference_table = renderDataTable({ 
-   arrange_data <- gender_race_data %>% mutate(diff_gender = Male_Number_Of_Workers - Female_Number_Of_Workers) %>% na.omit() %>% arrange(-diff_gender) %>% head(10) %>% select(Occupation, diff_gender) %>% 
-   datatable(filter = "none", select = "single")
+  output$male_difference_table = renderTable({ 
+   arrange_data <- gender_race_data %>% mutate(diff_gender = Male_Number_Of_Workers - Female_Number_Of_Workers) %>% na.omit() %>% arrange(-diff_gender) %>% head(10) %>% select(Occupation, diff_gender)
+   
+   colnames(arrange_data)[2] <- "Difference of Male Over Female Employees"
+   
+   arrange_data
   })
   
   output$question_2_content = renderText({
-    "Looking at the categories of the top ten fields that are dominated by men and female respectively, there are some trends to be noted. Most of the male dominated occupations (represented by the positive difference) 
-    are in the transportation and construction area. On the other hand, most of the female dominated occupations (represented by the negative difference) are in management and in the healthcare department. Comparing the minimum (representing
-    the occupation that has more female than male workers) and maximum (representing the occupation that has more male than female workers) of the diff_gender column, it is evident that the gender difference is almost twice as large in the natural resources
+    "Looking at the categories of the top ten fields that are dominated by men and female respectively, there are some trends to be noted. Most of the male-dominated occupations (represented by the positive difference) 
+    are in the transportation and construction area. On the other hand, most of the female-dominated occupations (represented by the negative difference) are in management and in the healthcare department. Comparing the minimum (representing
+    the occupation that has more female than male workers) and maximum (representing the occupation that has more male than female workers) of the gender difference column, it is evident that the gender difference is almost twice as large in the natural resources
     occupation of more males. With only 516 women in the natural resources, construction, and maintenance field, men make up 95% of that field. However, in office and adminstrative support occupations, women only make up about 60% of the field. The gap is not as significant
-    in the most female dominated job because it is more culturally common for males to work in the management and business field as it is for women to work in maintenance and construction."
+    in the most female-dominated job because it is more culturally common for males to work in the management and business field as it is for women to work in maintenance and construction."
   })
   
-  output$female_difference_table = renderDataTable({ 
-    arrange_data <- gender_race_data %>% mutate(diff_gender = Male_Number_Of_Workers - Female_Number_Of_Workers) %>% na.omit() %>% arrange(diff_gender) %>% head(10) %>% select(Occupation, diff_gender) %>% 
-      datatable(filter = "none", select = "single")
+  output$female_difference_table = renderTable({ 
+    arrange_data <- gender_race_data %>% mutate(diff_gender = Male_Number_Of_Workers - Female_Number_Of_Workers) %>% na.omit() %>% arrange(diff_gender) %>% head(10) %>% select(Occupation, diff_gender)
+  
+    colnames(arrange_data)[2] <- "Difference of Female Over Male Employees"
+    
+    arrange_data
+    
   })
   
   output$question_3 = renderText({
@@ -91,7 +98,7 @@ peeras_jeng_analysis_server = function(input, output) {
     pct <- round(filter_data_values)
     filter_data_colnames <- paste(filter_data_colnames, pct)
     filter_data_colnames <- paste(filter_data_colnames,"%",sep="") # add % to labels 
-    pie(filter_data_values, labels = filter_data_colnames)
+    pie(filter_data_values, labels = filter_data_colnames, col = c("purple", "green", "blue", "pink"), density = 40)
   })
   
   output$question_3_content = renderText({
