@@ -1,5 +1,3 @@
-library(shiny)
-
 kelly_ui <- fluidPage(
   titlePanel("Sandbox"),
   tabsetPanel(type = 'tabs',
@@ -26,7 +24,7 @@ kelly_ui <- fluidPage(
                       selectInput(inputId = "plot_value", label = "Choose topic:",
                                   choices = c("Total Employees" = "TOT_EMP", "Average Hourly Wage" = "H_MEAN", "Average Annual Salary" = "A_MEAN")),
                       selectInput(inputId = "plot_state", label = "Enter a State",
-                                  c(gdp$state))
+                                  c(states$region))
     
                     ),
                     mainPanel(
@@ -45,7 +43,7 @@ kelly_ui <- fluidPage(
                            selectInput(inputId = "table_value", label = "Choose topic:",
                                        choices = c("Total Employees" = "TOT_EMP", "Average Hourly Wage" = "H_MEAN", "Average Annual Salary" = "A_MEAN")),
                            selectInput(inputId = "table_state", label = "Enter a State",
-                                       c(gdp$state))
+                                       c(states$region))
 
                          ),
                          mainPanel(
