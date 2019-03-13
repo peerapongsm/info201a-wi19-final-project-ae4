@@ -2,7 +2,7 @@ about <-  tabPanel(
   "About", tags$section(
     h1("About this project", align = "center"),
     h2("AE-4 Team members"),
-    p("Jacinda Eng, Kelly Tran Ho, Yizhen(Sarah) Jin, Peerapong Saksommon"),
+    h3(id = "names","Jacinda Eng, Kelly Tran Ho, Yizhen(Sarah) Jin, Peerapong Saksommon"),
     br(),
     p("These analysis showed the areas of focus that society needs to be aware of and address. 
       As shown on gender page, there are still jobs with major gap in the number of female and male workers. 

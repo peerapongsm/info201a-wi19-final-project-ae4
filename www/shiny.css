@@ -32,6 +32,19 @@ h3 {
     text-shadow: 2px 2px white;
 }
 
+#names {
+    color: yellow;
+    font-size: 24px;
+    text-align: center;
+    text-shadow: 2px 2px black;
+}
+
 p {
     text-align: center;
+    color: white;
+    font-family: helvetica, sans-serif;
+    font-size: 14pt;
+    text-shadow: 1px 1px black;
+    padding: 5px;
+    margin: 5px;
 }
