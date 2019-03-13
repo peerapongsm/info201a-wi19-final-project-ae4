@@ -18,8 +18,8 @@ gender_race_sandbox <- tabPanel(
     mainPanel(
       tabsetPanel(
         type = "tabs",
-        tabPanel("Bar plot", h3(textOutput("bar_header")), plotOutput("bar", width = "100%", height = "550px")),
-        tabPanel("Table", h3(textOutput("table_header")), dataTableOutput("table"), textOutput("note")),
+        tabPanel("Bar plot", h3(textOutput("bar_header")), plotOutput("gender_bar", width = "100%", height = "550px")),
+        tabPanel("Table", h3(textOutput("table_header")), dataTableOutput("gender_table"), textOutput("note")),
         tabPanel("Pie chart", h3(textOutput("pie_header")), plotOutput("pie"))
       )
     )

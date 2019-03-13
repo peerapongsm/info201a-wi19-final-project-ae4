@@ -6,6 +6,7 @@ source("ui/sarah_ui.R")
 source("ui/kelly_ui.R")
 
 gather_ui <- navbarPage(
+  theme = "www/shiny.css",
   "US Occupational Statistics",
   home,
 
@@ -14,8 +15,8 @@ gather_ui <- navbarPage(
     "Wage",
     tabsetPanel(
       type = "pills",
-      wage_analysis
-      #wage_sandbox
+      wage_analysis,
+      wage_sandbox
     )
   ),
 
