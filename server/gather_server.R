@@ -592,9 +592,7 @@ gather_server = function(input, output) {
         filter_data <- filter_data %>% arrange(desc(H_MEAN))
       }
     }
-    
     filter_data  %>% head(10)
-    
   })
   
 }
