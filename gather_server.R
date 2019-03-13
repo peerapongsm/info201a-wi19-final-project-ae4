@@ -339,11 +339,7 @@ gather_server = function(input, output) {
   output$data3 <- renderUI({
     tagList("- ", a("States Occupational wages and employment dataset", href = "https://www.bls.gov/oes/current/oessrcst.htm?fbclid=IwAR3S4-BpXYofas6If42fOReztuCYdWgVq24MCXFLS7KU6a0BrJk7h7Zg5bQ"))
   })
-  # About links
-  output$data4 <- renderUI({
-    tagList("- ", a("Where are all women?", href = "https://www.theguardian.com/careers/careers-blog/2015/may/19/where-are-all-the-women-why-99-of-construction-site-workers-are-male"))
-  })
-  
+
   # Connecticut difference 5 jobs
   output$ctDiff <- renderPlot({
     job <- national_vs_states_df() %>%
