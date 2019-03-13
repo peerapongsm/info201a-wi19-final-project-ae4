@@ -1,9 +1,3 @@
-library(shiny)
-library(plotly)
-library(dplyr)
-library(graphics)
-
-
 sarah_ui <- navbarPage(
   "US Occupational Statistics",
   tabPanel(

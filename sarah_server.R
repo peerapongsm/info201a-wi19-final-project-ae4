@@ -8,7 +8,7 @@ library(ggplot2)
 
 
 states <- geojson_read("dataset/us-states.json", what = "sp")
-gdp_2017  = read_xlsx("dataset/qgdpstate0219.xlsx")
+gdp_2017  = read_xlsx("dataset/gdp_2017.xlsx")
 
 sarah_server <- function(input, output) {
   # map
@@ -179,11 +179,6 @@ sarah_server <- function(input, output) {
         x = "Occupation",
         y = "Employment number",
         color = "State Data"
-      # )+ theme(
-      #   axis.text.x = element_text(face="bold", 
-      #                              size=6, angle=90),
-      #   axis.text.y = element_text(face="bold", 
-      #                              size=6)
       )
   })
  
