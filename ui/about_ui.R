@@ -1,12 +1,8 @@
 about <-  tabPanel(
-  "About",
-  headerPanel(
-    h1("About this project", align = "center")
-  ),
-  mainPanel(
-    h1("AE-4 Team members"),
+  "About", tags$section(
+    h1("About this project", align = "center"),
+    h2("AE-4 Team members"),
     p("Jacinda Eng, Kelly Tran Ho, Yizhen(Sarah) Jin, Peerapong Saksommon"),
-    br(),
     br(),
     p("These analysis showed the areas of focus that society needs to be aware of and address. 
       As shown on gender page, there are still jobs with major gap in the number of female and male workers. 
@@ -17,7 +13,6 @@ about <-  tabPanel(
       of one gender employees. Therefore, society should continue to encourage women not only to enter the workforce, but to enter fields 
       that are more heavily male-dominated. The pie chart shows the need to increase the level of race diversity in all occupations. More 
       diversity in the workplace brings in a variety of perspectives and experiences which can greatly enhance a project or task."),
-    br(),
     br(),
     p("We used a lot of great data sets in working on this project:"),
     uiOutput("data1"),
