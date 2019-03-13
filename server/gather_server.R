@@ -111,6 +111,15 @@ gather_server <- function(input, output) {
     "Looking at the average ethnicity distributions for all the occupations is important as it shows the level of diversity in the workplace. Analyzing this pie chart, it is evident
     that there is a definite lack of diversity as 75% of the employees are white. It is also significant to note that out of the three minorities, there is typically as a lesser Asian representation in the workforce."
   })
+  
+  output$conclusion <- renderText({
+    "Conclusion"
+  })
+  
+  output$conclusion_content <- renderText({
+    "Overall, this analysis showed the areas of focus that society needs to be aware of and address. As shown on the first plot, there are still jobs with major gap in the number of female and male workers. The stereotype that women are not suited for labor-intensive jobs needs to be broken and treatment towards women in the more male-dominated occupations must to be improved. This will help better balance the number of workers in the natural resources and construction field. The second table shows that even when there are jobs that have more female workers, the gap is not as significant as to when the occupation has more male workers. There are also obvious similarities between the jobs that have more of one gender employees. Therefore, society should continue to encourage women not only to enter the workforce, but to enter fields that are more heavily male-dominated. 
+    The pie chart shows the need to increase the level of diversity in all occupations. More diversity in the workplace brings in a variety of perspectives and experiences which can greatly enhance a project or task."
+  })
 
   ## Peerapong's Server##
 
