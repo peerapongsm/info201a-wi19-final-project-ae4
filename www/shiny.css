@@ -1,7 +1,7 @@
 body{
-  background-color: lightblue;
-  background-image: url("home.jpg");
-  background-repeat: no-repeat;
+  background-image: url("home.png");
+  background-repeat: repeat-x;
+  background-size: 3000px;
 }
 
 p {
