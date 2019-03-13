@@ -1,5 +1,6 @@
 kelly_server <- function(input, output){
   
+  #A data set of the states
   state_df = reactive({
     state_df <- read_xlsx("dataset/state_data.xlsx") %>% 
       select(STATE, OCC_TITLE, OCC_GROUP, A_MEAN, H_MEAN, TOT_EMP) %>% 
@@ -12,7 +13,8 @@ kelly_server <- function(input, output){
     gdp_2017<- read_xlsx("dataset/gdp_2017.xlsx")
   })
  
-  
+  #This creates a map of the US that either shows the United States' GDP, Average Salary, and Average Hourly Wage
+  #The user can also over over the state to reveal a specfic value related 
   output$map <- renderLeaflet({
     gdp_2017 = gdp_2017()
     states <- geojson_read("dataset/us-states.json", what = "sp")
@@ -99,7 +101,8 @@ kelly_server <- function(input, output){
         labelOptions = labelOptions(style = list("font-weight" = "normal", padding = "3px 8px"),textsize = "15px",direction = "auto")
       )%>%  addLegend(pal = pal, title = map_title, values = map_value, position = "bottomleft", opacity = 2)
   })
-
+  
+  #This creates a bar graph that uses the states dataframe
   output$plot <- renderPlot({
     
     filter_data <- state_df() 
@@ -109,24 +112,30 @@ kelly_server <- function(input, output){
     
     if(input$plot_value == "A_MEAN"){
       filter_data <- filter_data 
-      if (input$plot_select == "top") {
+      if (input$plot_select == "top") { 
+        top_str <- "Highest"
         filter_data <- filter_data %>% arrange(A_MEAN)
       } else {
-        filter_data <- filter_data %>% arrange(-A_MEAN)
+        filter_data <- filter_data %>% arrange(desc(A_MEAN))
+        top_str <- "Lowest"
       }
     } else if(input$plot_value == "H_MEAN"){
       filter_data <- filter_data
       if (input$plot_select == "top") {
         filter_data <- filter_data %>% arrange(H_MEAN)
+        top_str <- "Highest"
       } else {
-        filter_data <- filter_data %>% arrange(-H_MEAN)
+        filter_data <- filter_data %>% arrange(desc(H_MEAN))
+        top_str <- "Lowest"
       }
     } else {
       filter_data <- filter_data
       if (input$plot_select == "top") {
         filter_data <- filter_data %>% arrange(TOT_EMP)
+        top_str <- "Highest"
       } else {
-        filter_data <- filter_data %>% arrange(-TOT_EMP)
+        filter_data <- filter_data %>% arrange(desc(TOT_EMP))
+        top_str <- "Lowest"
       }
     }
     
@@ -144,7 +153,7 @@ kelly_server <- function(input, output){
         x = "OCC_TITLE",
         y = input$plot_value
       ), fill = "Pink", alpha = 0.4) + labs(
-        title = paste("Top 5 Occupations with the Lowest", y_title, "in", input$plot_state),
+        title = paste("Top 5 Occupations with the", top_str , y_title, "in", input$plot_state),
         x = "Occupation",
         y = y_title
       ) + theme(
@@ -161,30 +170,35 @@ kelly_server <- function(input, output){
     filter_data <- state_df() %>% filter(OCC_GROUP == input$table_occ) %>% 
       filter(STATE == str_to_title(input$table_state))
     
-    if(input$table_value == "A_MEAN"){
-      filter_data <- filter_data %>% 
-      if (input$plot_select == "top") {
-        filter_data <- filter_data %>% arrange(A_MEAN)
-      } else {
-        filter_data <- filter_data %>% arrange(-A_MEAN)
+    filter_data <- filter_data %>% select(STATE, OCC_TITLE, input$table_value)
+    
+    if(input$table_value == "TOT_EMP"){
+      
+      if(input$table_select == "top"){
+        filter_data <- filter_data %>% arrange(TOT_EMP)
+      } else{
+        filter_data <- filter_data %>% arrange(desc(TOT_EMP))
       }
-    } else if(input$table_value == "H_MEAN"){
-      filter_data <- filter_data %>% 
-      if (input$table_select == "top") {
-        filter_data <- filter_data %>% arrange(H_MEAN)
-      } else {
-        filter_data <- filter_data %>% arrange(-H_MEAN)
+    } else if(input$table_value == "A_MEAN"){
+      
+      if(input$table_select == "top"){
+        filter_data <- filter_data %>% arrange(A_MEAN)
+      } else{
+        filter_data <- filter_data %>% arrange(desc(A_MEAN))
       }
     } else {
-      filter_data <- filter_data %>% 
-      if (input$table_select == "top") {
-        filter_data <- filter_data %>% arrange(TOT_EMP)
-      } else {
-        filter_data <- filter_data %>% arrange(-TOT_EMP)
+      
+      if(input$table_select == "top"){
+        filter_data <- filter_data %>% arrange(H_MEAN)
+      } else{
+        filter_data <- filter_data %>% arrange(desc(H_MEAN))
       }
     }
     
-    filter_data %>% select(STATE, OCC_TITLE, input$table_value) %>% head(10)
+    filter_data  %>% head(10)
+    
   })
+  
+  
   
 }

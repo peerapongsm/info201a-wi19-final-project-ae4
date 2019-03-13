@@ -47,6 +47,11 @@ kelly_ui <- fluidPage(
 
                          ),
                          mainPanel(
+                           hr("Key: "),
+                           p("OCC_TITLE: The name of the occupation"),
+                           p("TOT_EMP: The average total number of employees for the occupation"),
+                           p("H_MEAN: The average hourly mean for the occupation"),
+                           p("A_MEAN: The average annual salary for the occupation"),
                            dataTableOutput("table")
                          )
 
