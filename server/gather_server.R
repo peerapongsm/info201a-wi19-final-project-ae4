@@ -2,6 +2,7 @@ gather_server <- function(input, output) {
   ## Jacinda's Analysis Server##
   gender_race_data <- reactive({ 
     gender_race_data <- read.csv("server/dataset/gender_race_data.csv") # reads the gender_race_data.csv file and stores it in gender_race_data
+    gender_race_data
   })
 
   output$gender_header <- renderText({ # displays an "observations" header 
@@ -123,7 +124,7 @@ gather_server <- function(input, output) {
 
   ## Peerapong's Server##
 
-  arrange_data <- reactive({
+  arrange_data <- reactive({ #Arrange data frame for gender and race data sort by input
     arrange_data <- gender_race_data() %>%
       mutate(diff_gender = Male_Number_Of_Workers - Female_Number_Of_Workers)
     if (grepl(input$select, "emp") | grepl(input$select, "gdr")) {
@@ -139,9 +140,10 @@ gather_server <- function(input, output) {
         arrange_data <- arrange_data %>% na.omit() %>% arrange(diff_gender)
       }
     }
+    arrange_data
   })
 
-  output$bar_header <- renderText({
+  output$bar_header <- renderText({ # Text output for bar plot header
     tmp <- paste("Top 10 occupations with", input$radio)
     if (grepl(input$select, "emp")) {
       paste(tmp, "total workers")
@@ -152,7 +154,7 @@ gather_server <- function(input, output) {
     }
   })
 
-  output$gender_bar <- renderPlot({
+  output$gender_bar <- renderPlot({ # Bar plot for gender data 
     arrange_data <- arrange_data() %>% head(10)
     if (grepl(input$select, "emp")) {
       ggplot(arrange_data, aes(x = Occupation, y = Total_Number_Of_Workers, fill = Occupation)) +
@@ -172,7 +174,7 @@ gather_server <- function(input, output) {
     }
   })
 
-  output$table_header <- renderText({
+  output$table_header <- renderText({ # Text output for table header
     if (grepl(input$select, "emp")) {
       "Table of total workers by occupation"
     } else if (grepl(input$select, "gdr")) {
@@ -182,7 +184,7 @@ gather_server <- function(input, output) {
     }
   })
 
-  output$gender_table <- renderDataTable({
+  output$gender_table <- renderDataTable({ # Data table for data use for plot
     arrange_data <- arrange_data()
     if (grepl(input$select, "emp")) {
       arrange_data <- arrange_data %>% select(Occupation, Total_Number_Of_Workers)
@@ -194,14 +196,14 @@ gather_server <- function(input, output) {
     datatable(arrange_data, filter = "none", select = "single")
   })
 
-  output$note <- renderText({
+  output$note <- renderText({ # Text output describing behavior of the plot
     if (grepl(input$select, "gdiff")) {
       "*Note: When the differences are negative, it means that there are more females employed in that specific occupation. 
       When the differences are positive, it means that there are more males employed in the specific occupation."
     }
   })
 
-  output$pie_header <- renderText({
+  output$pie_header <- renderText({ # Text output for pie chart header
     if (is.null(input$gender_table_row_last_clicked)) {
       "Please select an occupation from table to plot a pie chart"
     } else {
@@ -212,7 +214,7 @@ gather_server <- function(input, output) {
     }
   })
 
-  output$pie <- renderPlot({
+  output$pie <- renderPlot({ # Pie chart for race data
     if (!is.null(input$gender_table_row_last_clicked)) {
       filter_data <- arrange_data()
       title <- filter_data[input$gender_table_rows_selected, 3]
@@ -493,6 +495,7 @@ gather_server <- function(input, output) {
         state = factor(state, levels = levels)
       ) %>%
       arrange(state))
+    rearranged_gdp
   })
 
   # This creates a map of the US that either shows the United States' GDP, Average Salary, and Average Hourly Wage
