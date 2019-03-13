@@ -1,0 +1,10 @@
+body{
+  background-image: radial-gradient(#d0e8e1, #a4dbcb);
+    background-repeat: repeat-x;
+    background-size: 3000px;
+}
+
+p {
+  font-family: verdana;
+  font-size: 20px;
+}
