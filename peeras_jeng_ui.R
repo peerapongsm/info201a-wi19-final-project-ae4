@@ -1,5 +1,5 @@
 gender_race_sandbox <- tabPanel(
-  "Gender and Ethnicity employment statistic",
+  "Gender and Ethnicity employment statistic", br(),
   sidebarLayout(
     sidebarPanel(
       selectInput(

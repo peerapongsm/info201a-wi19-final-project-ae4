@@ -260,29 +260,7 @@ gather_server = function(input, output) {
   
   output$gdpMap <- renderLeaflet({
     states <- geojson_read("dataset/us-states.json", what = "sp")
-    gdp_2017<- read_xlsx("dataset/gdp_2017.xlsx") %>% select(state, gdp_2017)
-    gdp = gdp_2017[gdp_2017$state %in% state.name,]
-    left_over <- data.frame(state = c("District of Columnbia","Puerto Rico"), gdp_2017 = c(0,0))
-    gdp = rbind(gdp,left_over)
-    
-    state_df <- state_df() 
-    state_df[4:6] <- lapply(state_df[4:6], as.numeric)
-    states_summarized <- state_df %>%
-      group_by(STATE) %>% summarize(
-        avg_hour_wage = round(mean(H_MEAN, na.rm = TRUE), 2),
-        avg_total_employee = round(mean(TOT_EMP, na.rm = TRUE), 2)
-      ) %>%
-      filter(STATE !=  "Guam" & STATE != "Virgin Islands")
-    
-    levels = states$NAME
-    rearranged_states_summarized <- as.data.frame(states_summarized %>% mutate(
-      state = factor(STATE, levels = levels)) %>%
-        arrange(state))
-    rearranged_gdp <- as.data.frame(gdp %>% mutate(
-      state = factor(state, levels = levels)) %>% 
-        arrange(state)
-    )
-    
+    rearranged_gdp = rearranged_gdp()
     states@data <- states@data %>% mutate(gdp = rearranged_gdp$gdp_2017)
     bins <- seq(-2, 5, 1)
     pal <- colorBin(palette = "RdYlGn", domain = states@data$gdp, bins = bins)
@@ -312,7 +290,7 @@ gather_server = function(input, output) {
       addLegend(
         pal = pal,
         title = "Percent of GDP Growth (2017)",
-        values = gdp,
+        values = states@data$gdp,
         labFormat = labelFormat(suffix = "%", between = " to "),
         position = "bottomleft",
         opacity = 2
@@ -409,7 +387,7 @@ gather_server = function(input, output) {
         x = "Occupation",
         y = "Employment number",
         color = "State Data"
-      )
+      ) + theme(axis.text.x = element_blank())
   })
   output$employmentCT <- renderPlot({
     job <- national_vs_states_df() %>%
@@ -427,7 +405,7 @@ gather_server = function(input, output) {
         x = "Occupation",
         y = "Employment number",
         color = "State Data"
-      )
+      ) + theme(axis.text.x = element_blank())
   })
   
   ##Kelly's Server##
@@ -441,23 +419,36 @@ gather_server = function(input, output) {
                TOT_EMP != "**")
   })
   
+  rearranged_gdp = reactive({
+    gdp_2017<- read_xlsx("dataset/gdp_2017.xlsx") %>% select(state, gdp_2017)
+    gdp = gdp_2017[gdp_2017$state %in% state.name,]
+    left_over <- data.frame(state = c("District of Columnbia","Puerto Rico"), gdp_2017 = c(0,0))
+    gdp = rbind(gdp,left_over)
+    levels = states$NAME
+    rearranged_gdp <- as.data.frame(gdp %>% mutate(
+      state = factor(state, levels = levels)) %>% 
+        arrange(state)
+    )
+  })
+  
   #This creates a map of the US that either shows the United States' GDP, Average Salary, and Average Hourly Wage
   #The user can also over over the state to reveal a specfic value related 
   output$map <- renderLeaflet({
     states <- geojson_read("dataset/us-states.json", what = "sp")
-    gdp_2017<- read_xlsx("dataset/gdp_2017.xlsx") %>% select(state, gdp_2017)
-    gdp = gdp_2017[gdp_2017 %in% states$region,]
-    left_over <- data.frame(state = c("District of Columnbia","Puerto Rico"), gdp_2017 = c(0,0))
-    gdp = rbind(gdp_2017, left_over)
-    levels = states$NAME
+    rearranged_gdp = rearranged_gdp()
+    state_df <- state_df() 
+    state_df[4:6] <- lapply(state_df[4:6], as.numeric)
+    states_summarized <- state_df %>%
+      group_by(STATE) %>% summarize(
+        avg_hour_wage = round(mean(H_MEAN, na.rm = TRUE), 2),
+        avg_total_employee = round(mean(TOT_EMP, na.rm = TRUE), 2)
+      ) %>%
+      filter(STATE !=  "Guam" & STATE != "Virgin Islands")
     rearranged_states_summarized <- as.data.frame(states_summarized %>% mutate(
       state = factor(STATE, levels = levels)) %>%
         arrange(state))
-    rearranged_gdp <- as.data.frame(gdp %>% mutate(
-      state = factor(state, levels = levels)) %>% 
-        arrange(state))
     #Adds another column
-    states@data = states@data %>% mutate(gdp = arrange_gdp$gdp_2017,
+    states@data = states@data %>% mutate(gdp = rearranged_gdp$gdp_2017,
                                          hourly_wage = rearranged_states_summarized$avg_hour_wage,
                                          total_employee = rearranged_states_summarized$avg_total_employee)
     

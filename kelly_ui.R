@@ -14,7 +14,7 @@ wage_sandbox <- tabPanel(
               
                 ), 
                 tabPanel("Occupations Plot",
-                  titlePanel("Occupations Explorer"),
+                  hr("Occupations Explorer"),
                   sidebarLayout(
                     sidebarPanel(
                       radioButtons(inputId = "plot_select", label = "Choose",
@@ -33,7 +33,7 @@ wage_sandbox <- tabPanel(
                   
                   )),
               tabPanel("Occupations Table",
-                       titlePanel("Occupations Data Table"),
+                       hr("Occupations Data Table"),
                        sidebarLayout(
                          sidebarPanel(
                            radioButtons(inputId = "table_select", label = "Choose",
