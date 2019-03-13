@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-peeras_jeng_analysis_server <- function(input, output) {
-
-  ## Jacinda's Analysis Server##
-=======
+## Jacinda's Analysis Server##
 gather_server = function(input, output) {
-  
-  ##Jacinda's Analysis Server##
->>>>>>> b024bf3ea739bc613503a87c84cfb7ad281801b6
+
   gender_race_data <- read.csv("dataset/gender_race_data.csv")
 
   output$header <- renderText({
@@ -243,7 +237,6 @@ gather_server = function(input, output) {
       pie
     }
   })
-<<<<<<< HEAD
 
   ## Sarah's Server##
   output$gdpMap <- renderLeaflet({
@@ -252,17 +245,6 @@ gather_server = function(input, output) {
     colnames(gdp_2017) <- letters[1:10]
     gdp <- gdp_2017[gdp_2017$a %in% state.name, ] %>%
       select(a, b) %>%
-=======
-  
-  ##Sarah's Server##
-  
-  output$gdpMap <- renderLeaflet({
-    states <- geojson_read("dataset/us-states.json", what = "sp")
-    gdp_2017  = read_xlsx("dataset/gdp_2017.xlsx")
-    colnames(gdp_2017) = letters[1:10]
-    gdp = gdp_2017[gdp_2017$a %in% state.name,] %>% 
-      select(a,b) %>% 
->>>>>>> b024bf3ea739bc613503a87c84cfb7ad281801b6
       rename(
         "state" = a,
         "gdp_2017" = b
@@ -316,7 +298,6 @@ gather_server = function(input, output) {
 
   # Washington difference 5 jobs
   output$waDiff <- renderPlot({
-<<<<<<< HEAD
     national_data <- read_xlsx("dataset/national_data.xlsx") %>%
       filter(H_MEAN != "*") %>%
       select(OCC_TITLE, H_MEAN)
@@ -340,17 +321,6 @@ gather_server = function(input, output) {
         value = wage,
         -OCC_TITLE
       )
-=======
-    job <- head(national_vs_states_df %>%
-                   mutate(diff = washington_hour_mean - national_hour_mean) %>%
-                   arrange(desc(diff)) %>% 
-                   select(
-                     OCC_TITLE, washington_hour_mean, national_hour_mean), 5)
-    job_gather <- job %>% 
-      gather(key = state,
-             value = wage,
-             -OCC_TITLE)
->>>>>>> b024bf3ea739bc613503a87c84cfb7ad281801b6
     ggplot(data = job_gather) +
       geom_col(mapping = aes(
         x = OCC_TITLE,
@@ -407,15 +377,10 @@ gather_server = function(input, output) {
         x = "Occupation",
         y = "Hourly Wage",
         color = "State Data"
-<<<<<<< HEAD
       )
   })
   # Question: what job has the highest number of employees in Washington
-=======
-      ) 
-  })
-  #Question: what job has the highest number of employees in Washington
->>>>>>> b024bf3ea739bc613503a87c84cfb7ad281801b6
+
   output$employmentWA <- renderPlot({
     job <- national_vs_states_df %>%
       filter(OCC_GROUP == "detailed") %>%
