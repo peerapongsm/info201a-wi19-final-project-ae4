@@ -5,7 +5,29 @@ body{
     width: 100%;
 }
 
-p {
-  font-family: verdana;
-  font-size: 20px;
+section {
+  background: rgba(0, 151, 19, 0.4);
+  padding: 5px;
+  margin: 5px;
+}
+
+h1 {
+    color: black;
+    font-size: 50px;
+    text-align: center;
+    text-shadow: 2px 2px white;
+}
+
+h2 {
+    color: black;
+    font-size: 35px;
+    text-align: center;
+    text-shadow: 2px 2px white;
+}
+
+h3 {
+    color: black;
+    font-size: 28px;
+    text-align: center;
+    text-shadow: 2px 2px white;
 }

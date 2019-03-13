@@ -4,7 +4,7 @@ wage_sandbox <- tabPanel(
     type = "pills",
     tabPanel(
       "Map",
-      hr("Highlight over a state to reveal more stats"),
+      h2("Highlight over a state to reveal more stats"),
       sidebarLayout(
         sidebarPanel(
           radioButtons(
@@ -19,7 +19,7 @@ wage_sandbox <- tabPanel(
     ),
     tabPanel(
       "Occupations Plot",
-      hr("Occupations Explorer"),
+      h2("Occupations Explorer"),
       sidebarLayout(
         sidebarPanel(
           radioButtons(
@@ -46,7 +46,7 @@ wage_sandbox <- tabPanel(
     ),
     tabPanel(
       "Occupations Table",
-      hr("Occupations Table"),
+      h2("Occupations Table"),
       sidebarLayout(
         sidebarPanel(
           radioButtons(
@@ -67,11 +67,11 @@ wage_sandbox <- tabPanel(
           )
         ),
         mainPanel(
-          hr("Key: "),
-          p("OCC_TITLE: The name of the occupation"),
-          p("TOT_EMP: The average total number of employees for the occupation"),
-          p("H_MEAN: The average hourly mean for the occupation"),
-          p("A_MEAN: The average annual salary for the occupation"),
+          "Key: ",
+          "OCC_TITLE: The name of the occupation",
+          "TOT_EMP: The average total number of employees for the occupation",
+          "H_MEAN: The average hourly mean for the occupation",
+          "A_MEAN: The average annual salary for the occupation",
           tableOutput("table")
         )
       )

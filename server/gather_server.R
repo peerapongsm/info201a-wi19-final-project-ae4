@@ -1,14 +1,14 @@
 gather_server <- function(input, output) {
   ## Jacinda's Analysis Server##
-  gender_race_data <- reactive({ 
+  gender_race_data <- reactive({
     gender_race_data <- read.csv("server/dataset/gender_race_data.csv") # reads the gender_race_data.csv file and stores it in gender_race_data
     gender_race_data
   })
 
-  output$gender_header <- renderText({ # displays an "observations" header 
+  output$gender_header <- renderText({ # displays an "observations" header
     "Observations"
   })
-  
+
   output$gender_first_section_content <- renderText({ # displays the analysis for the observations section
     "While analyzing the graphs, there are many occupations that have a great gap between the number of male and female workers. There are only a handful of occupations that have a balanced number
     of different genders in a specific job. This analysis takes a closer look at the similarities between occupations that have a greater difference between male and female employees and explain why this
@@ -47,15 +47,15 @@ gather_server <- function(input, output) {
       theme(axis.text.x = element_text(angle = 90, hjust = 1)) + ylab("Employees")
   })
 
-  output$male_difference_table_title <- renderText({ # displays the table title with more male than female workers 
+  output$male_difference_table_title <- renderText({ # displays the table title with more male than female workers
     "Top 10 Occupations with More Male Employees"
   })
 
-  output$female_difference_table_title <- renderText({ # displays the table title with more female than male workers 
+  output$female_difference_table_title <- renderText({ # displays the table title with more female than male workers
     "Top 10 Occupations with More Female Employees"
   })
 
-  output$male_difference_table <- renderTable({ # displays a table that shows the top 10 jobs that have more males than females 
+  output$male_difference_table <- renderTable({ # displays a table that shows the top 10 jobs that have more males than females
     sort_data <- gender_race_data() %>% mutate(diff_gender = Male_Number_Of_Workers - Female_Number_Of_Workers) %>% na.omit() %>% arrange(-diff_gender) %>% head(10) %>% select(Occupation, diff_gender)
 
     colnames(sort_data)[2] <- "Difference of Male Over Female Employees"
@@ -71,7 +71,7 @@ gather_server <- function(input, output) {
     in the most female-dominated job because it is more culturally common for males to work in the management and business field as it is for women to work in maintenance and construction."
   })
 
-  output$female_difference_table <- renderTable({ # displays a table that shows the top 10 jobs that have more emales than males 
+  output$female_difference_table <- renderTable({ # displays a table that shows the top 10 jobs that have more emales than males
     sort_data <- gender_race_data() %>% mutate(diff_gender = Male_Number_Of_Workers - Female_Number_Of_Workers) %>% na.omit() %>% arrange(diff_gender) %>% head(10) %>% select(Occupation, diff_gender)
 
     colnames(sort_data)[2] <- "Difference of Female Over Male Employees"
@@ -87,7 +87,7 @@ gather_server <- function(input, output) {
     "Mean Ethnicity Distribution of All Occupations in 2018"
   })
 
-  output$ethnicity_pie <- renderPlot({ # displays a pie chart representing the average ethnicity distribution for all occupations 
+  output$ethnicity_pie <- renderPlot({ # displays a pie chart representing the average ethnicity distribution for all occupations
     filter_data <- gender_race_data() %>%
       select(
         Percent_White_Employed,
@@ -112,19 +112,19 @@ gather_server <- function(input, output) {
     "Looking at the average ethnicity distributions for all the occupations is important as it shows the level of diversity in the workplace. Analyzing this pie chart, it is evident
     that there is a definite lack of diversity as 75% of the employees are white. It is also significant to note that out of the three minorities, there is typically as a lesser Asian representation in the workforce."
   })
-  
+
   output$gender_conclusion <- renderText({ # displays the "conclusion" header
     "Conclusion"
   })
-  
-  output$gender_conclusion_content <- renderText({ # displays the conclusion content 
+
+  output$gender_conclusion_content <- renderText({ # displays the conclusion content
     "Overall, this analysis showed the areas of focus that society needs to be aware of and address. As shown on the first plot, there are still jobs with major gap in the number of female and male workers. The stereotype that women are not suited for labor-intensive jobs needs to be broken and treatment towards women in the more male-dominated occupations must to be improved. This will help better balance the number of workers in the natural resources and construction field. The second table shows that even when there are jobs that have more female workers, the gap is not as significant as to when the occupation has more male workers. There are also obvious similarities between the jobs that have more of one gender employees. Therefore, society should continue to encourage women not only to enter the workforce, but to enter fields that are more heavily male-dominated. 
     The pie chart shows the need to increase the level of diversity in all occupations. More diversity in the workplace brings in a variety of perspectives and experiences which can greatly enhance a project or task."
   })
 
   ## Peerapong's Server##
 
-  arrange_data <- reactive({ #Arrange data frame for gender and race data sort by input
+  arrange_data <- reactive({ # Arrange data frame for gender and race data sort by input
     arrange_data <- gender_race_data() %>%
       mutate(diff_gender = Male_Number_Of_Workers - Female_Number_Of_Workers)
     if (grepl(input$select, "emp") | grepl(input$select, "gdr")) {
@@ -154,7 +154,7 @@ gather_server <- function(input, output) {
     }
   })
 
-  output$gender_bar <- renderPlot({ # Bar plot for gender data 
+  output$gender_bar <- renderPlot({ # Bar plot for gender data
     arrange_data <- arrange_data() %>% head(10)
     if (grepl(input$select, "emp")) {
       ggplot(arrange_data, aes(x = Occupation, y = Total_Number_Of_Workers, fill = Occupation)) +
@@ -481,8 +481,8 @@ gather_server <- function(input, output) {
     state_df[4:6] <- lapply(state_df[4:6], as.numeric)
     state_df
   })
-  
-  #Data set of the United States' GDP
+
+  # Data set of the United States' GDP
   rearranged_gdp <- reactive({
     states <- geojson_read("server/dataset/us-states.json", what = "sp")
     gdp_2017 <- read_xlsx("server/dataset/gdp_2017.xlsx") %>% select(state, gdp_2017)
@@ -647,8 +647,8 @@ gather_server <- function(input, output) {
         )
       )
   })
-  
-  #This creates a table that filters to the user's selected values
+
+  # This creates a table that filters to the user's selected values
   output$table <- renderTable({
     filter_data <- state_df() %>%
       filter(OCC_GROUP == input$table_occ) %>%
@@ -679,20 +679,31 @@ gather_server <- function(input, output) {
     }
     filter_data %>% head(10)
   })
-  #All text outputs for the home_ui page
-  output$page_title_home_ui <- renderText({"US Occupational Statistics"})
-  
-  output$project_description_home_ui <- renderText({"Our project studies the distribution of wages among occupations. 
-      Since the wage varies from each states, we chose states with the highest and lowest GDP and compare them with nation wages. In this case for 2017, the state with the highest GDP is Washington, and the state with the lowest GDP is Connecticut. Comparing these states will help us develop a deeper understanding regarding each states' focus within their respective economy. For example, if there is a higher wage towards technology related fields in Washington compared to Connecticut, then there is a trend that Washington has a stronger focus towards technology related careers."})
-  
-  output$page_description_home_ui <- renderText({"Page Description"})
-  
-  output$wage_description_home_ui <- renderText({"The 'Wage' tab provides a description of the states' GDP in a map format. It also describes how GDP affect's each states occupation's wage and total number of employees relating to that."})
-  
-  output$gender_description_home_ui <- renderText({"The 'Gender' tab describes the distribution of occupations across men and women and across races as well.
+  # All text outputs for the home_ui page
+  output$page_title_home_ui <- renderText({
+    "US Occupational Statistics"
+  })
+
+  output$project_description_home_ui <- renderText({
+    "Our project studies the distribution of wages among occupations. 
+      Since the wage varies from each states, we chose states with the highest and lowest GDP and compare them with nation wages. In this case for 2017, the state with the highest GDP is Washington, and the state with the lowest GDP is Connecticut. Comparing these states will help us develop a deeper understanding regarding each states' focus within their respective economy. For example, if there is a higher wage towards technology related fields in Washington compared to Connecticut, then there is a trend that Washington has a stronger focus towards technology related careers."
+  })
+
+  output$page_description_home_ui <- renderText({
+    "Page Description"
+  })
+
+  output$wage_description_home_ui <- renderText({
+    "The 'Wage' tab provides a description of the states' GDP in a map format. It also describes how GDP affect's each states occupation's wage and total number of employees relating to that."
+  })
+
+  output$gender_description_home_ui <- renderText({
+    "The 'Gender' tab describes the distribution of occupations across men and women and across races as well.
       Looking at this data can help us understand how gender, occupations, wage ties together in a subtle way. In other words, if we see that there are more men have an occupation with a higher wage, then 
-due to the lack of diversity within that occupation, there is a large wage gap between men and women."})
-  
-  output$about_home_ui <- renderText({"The 'About' tab contains references of the datasets."})
-  
+due to the lack of diversity within that occupation, there is a large wage gap between men and women."
+  })
+
+  output$about_home_ui <- renderText({
+    "The 'About' tab contains references of the datasets."
+  })
 }

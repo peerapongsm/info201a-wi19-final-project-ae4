@@ -7,11 +7,8 @@ home <- tabPanel(
   ),
   tags$section(id = "home_section_description",          
               h1(textOutput("page_description_home_ui")),
-               br(),
                textOutput("wage_description_home_ui"),
-               br(),
                textOutput("gender_description_home_ui"),
-               br(),
                textOutput("about_home_ui")
   )
 )
