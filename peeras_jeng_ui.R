@@ -1,4 +1,4 @@
-peeras_jeng_ui <- fluidPage(
+gender_race_sandbox <- fluidPage(
   titlePanel(h1("Gender and Ethnicity employment statistic"), windowTitle = "Gender and Race"),
   sidebarLayout(
     sidebarPanel(
