@@ -34,8 +34,15 @@ wage_analysis <- tabPanel(
     laborers and freight, office clerks, and retail salespersons."),
   br(),
   br(),
-  strong(p("What job has the hight number of employees in Connecticut?")),
+  strong(p("What job has the highest number of employees in Connecticut?")),
   plotOutput("employmentCT"),
   p("In comparison, Connecticut has the highest employment number in cashier, customer service representatives, general manager,
-    registered nurses, and retail salespersons.")
+    registered nurses, and retail salespersons."),
+  br(),
+  h3("Conclusion"),
+  p("Overall, we can see that internists have higher hourly wages from both Washington and Connecticut. 
+    Cashiers have the top five demand for employment in both of the states. 
+    There is a similarity in high demand jobs in both states: They often times are jobs that
+    requires less certificate and is easier to pick up. We were looking for the correlation between GDP and jobs that they are favoring.
+    However, there is not an obvious trend in jobs that they are looking at.")
   )
