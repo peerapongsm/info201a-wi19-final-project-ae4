@@ -1,6 +1,9 @@
 body{
   background-color: lightblue;
+  background-image: url("home.jpg");
+  background-repeat: no-repeat;
 }
+
 p {
     font-family: verdana;
     font-size: 20px;
