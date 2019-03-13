@@ -2,6 +2,7 @@ gather_server <- function(input, output) {
   ## Jacinda's Analysis Server##
   gender_race_data <- reactive({ 
     gender_race_data <- read.csv("server/dataset/gender_race_data.csv") # reads the gender_race_data.csv file and stores it in gender_race_data
+    gender_race_data
   })
 
   output$gender_header <- renderText({ # displays an "observations" header 
@@ -139,6 +140,7 @@ gather_server <- function(input, output) {
         arrange_data <- arrange_data %>% na.omit() %>% arrange(diff_gender)
       }
     }
+    arrange_data
   })
 
   output$bar_header <- renderText({ # Text output for bar plot header
@@ -493,6 +495,7 @@ gather_server <- function(input, output) {
         state = factor(state, levels = levels)
       ) %>%
       arrange(state))
+    rearranged_gdp
   })
 
   # This creates a map of the US that either shows the United States' GDP, Average Salary, and Average Hourly Wage
