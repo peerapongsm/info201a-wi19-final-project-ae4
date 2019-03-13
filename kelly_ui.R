@@ -1,5 +1,5 @@
-kelly_ui <- fluidPage(
-  titlePanel("Sandbox"),
+wage_sandbox <- tabPanel(
+  "Sandbox",
   tabsetPanel(type = 'tabs',
               tabPanel(
                 "Map", 

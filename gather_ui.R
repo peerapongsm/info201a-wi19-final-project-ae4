@@ -1,8 +1,9 @@
 source('peeras_jeng_ui.R')
 source('peeras_jeng_analysis_ui.R')
 source('sarah_ui.R')
+source('kelly_ui.R')
 
-gather_ui = navbarPage(
+gather_ui = navbarPage (
   "US Occupational Statistics",
   tabPanel(
     "Home",
@@ -27,8 +28,8 @@ gather_ui = navbarPage(
   tabPanel(
     "Wage",
     tabsetPanel(type = 'pills',
-                sarah_ui,
-                tabPanel("Sandbox"))),
+                wage_analysis,
+                wage_sandbox)),
   
   # Gender tab
   tabPanel(
@@ -37,9 +38,7 @@ gather_ui = navbarPage(
                 gender_race_analysis,
                 gender_race_sandbox
                 )
-    ),
-  
-  
+  ),
   # About tab
   tabPanel(
     "About",

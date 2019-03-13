@@ -1,4 +1,4 @@
-sarah_ui <- tabPanel(
+wage_analysis <- tabPanel(
   "Analysis",
   h3("State GDP in the US"),
   p("What is GDP?"),
