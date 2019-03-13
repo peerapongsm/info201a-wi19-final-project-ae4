@@ -479,7 +479,8 @@ gather_server <- function(input, output) {
     state_df[4:6] <- lapply(state_df[4:6], as.numeric)
     state_df
   })
-
+  
+  #Data set of the United States' GDP
   rearranged_gdp <- reactive({
     states <- geojson_read("server/dataset/us-states.json", what = "sp")
     gdp_2017 <- read_xlsx("server/dataset/gdp_2017.xlsx") %>% select(state, gdp_2017)
@@ -643,7 +644,8 @@ gather_server <- function(input, output) {
         )
       )
   })
-
+  
+  #This creates a table that filters to the user's selected values
   output$table <- renderTable({
     filter_data <- state_df() %>%
       filter(OCC_GROUP == input$table_occ) %>%
@@ -674,7 +676,7 @@ gather_server <- function(input, output) {
     }
     filter_data %>% head(10)
   })
-  
+  #All text outputs for the home_ui page
   output$page_title_home_ui <- renderText({"US Occupational Statistics"})
   
   output$project_description_home_ui <- renderText({"Our project studies the distribution of wages among occupations. 
