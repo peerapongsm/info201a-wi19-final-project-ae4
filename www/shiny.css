@@ -1,7 +1,8 @@
 body{
   background-image: radial-gradient(#d0e8e1, #a4dbcb);
-    background-repeat: repeat-x;
-    background-size: 3000px;
+    background-repeat: repeat-y;
+    height: 100%;
+    width: 100%;
 }
 
 p {
