@@ -1,7 +1,7 @@
 gender_race_sandbox <- tabPanel(
   "Gender and Ethnicity employment statistic", br(),
-  sidebarLayout(
-    sidebarPanel(
+  sidebarLayout( # Create side bar layout
+    sidebarPanel( # Interactive widget receiving input data
       selectInput(
         inputId = "select", label = h2("Select data"),
         choices = c(
@@ -15,7 +15,7 @@ gender_race_sandbox <- tabPanel(
         choices = c("Most" = "most", "Least" = "least")
       )
     ),
-    mainPanel(
+    mainPanel( # Main panel showing output from interactive widget
       tabsetPanel(
         type = "tabs",
         tabPanel("Bar plot", h3(textOutput("bar_header")), plotOutput("gender_bar", width = "100%", height = "550px")),
