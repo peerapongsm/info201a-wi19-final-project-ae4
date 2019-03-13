@@ -8,7 +8,7 @@ gender_race_analysis = fluidPage(
               h2(textOutput("questions")),
               strong((textOutput("question_1"))),
               br(),
-              plotOutput("gender_employee"),
+              plotOutput("gender_employee", width = "100%", height = "550px"),
               textOutput("question_1_content")
               ),
   br(),
@@ -16,10 +16,10 @@ gender_race_analysis = fluidPage(
                strong((textOutput("question_2"))),
                br(),
                (textOutput("male_difference_table_title")),
-               dataTableOutput("male_difference_table"),
+               tableOutput("male_difference_table"),
                br(),
                (textOutput("female_difference_table_title")),
-               dataTableOutput("female_difference_table"),
+               tableOutput("female_difference_table"),
                textOutput("question_2_content")
                ),
   br(),
